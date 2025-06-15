@@ -23,6 +23,8 @@ interface ColumnBlockProps {
   descriptionSize: string;
   itemSpacing: string;
   itemAlignment: string;
+  layoutDirection: string;
+  responsiveView: string;
 }
 
 export const ColumnBlockTemplate: React.FC<ColumnBlockProps> = ({
@@ -39,7 +41,9 @@ export const ColumnBlockTemplate: React.FC<ColumnBlockProps> = ({
   textSize,
   descriptionSize,
   itemSpacing,
-  itemAlignment
+  itemAlignment,
+  layoutDirection,
+  responsiveView
 }) => {
   const parseItems = (itemsString: string): ColumnContentItem[] => {
     try {
@@ -87,6 +91,26 @@ export const ColumnBlockTemplate: React.FC<ColumnBlockProps> = ({
     });
   }
 
+  // Responsive classes based on view selection
+  const getResponsiveClasses = () => {
+    const direction = layoutDirection === 'horizontal' ? 'flex-row' : 'flex-col';
+    
+    switch (responsiveView) {
+      case 'mobile':
+        return `flex ${direction} flex-wrap gap-${itemSpacing}`;
+      case 'tablet':
+        return layoutDirection === 'horizontal' 
+          ? `grid grid-cols-2 md:grid-cols-3 gap-${itemSpacing}`
+          : `flex flex-col gap-${itemSpacing}`;
+      case 'desktop':
+        return layoutDirection === 'horizontal'
+          ? `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-${itemSpacing}`
+          : `flex flex-col gap-${itemSpacing}`;
+      default:
+        return `flex ${direction} flex-wrap gap-${itemSpacing}`;
+    }
+  };
+
   return (
     <div 
       style={{ 
@@ -97,17 +121,17 @@ export const ColumnBlockTemplate: React.FC<ColumnBlockProps> = ({
       className={`${width} ${padding} min-h-16`}
     >
       <div className="prose max-w-none" style={{ color: textColor }}>
-        {content && (
+        {content && content.trim() && (
           <div className="mb-4">
             {content}
           </div>
         )}
         
-        <div className={`space-y-${itemSpacing}`}>
+        <div className={getResponsiveClasses()}>
           {itemsToShow.map((item, index) => (
             <div 
               key={index} 
-              className={`flex flex-col ${itemAlignment} p-3 rounded-lg`}
+              className={`flex flex-col ${itemAlignment} p-3 rounded-lg ${layoutDirection === 'horizontal' ? 'flex-1 min-w-0' : 'w-full'}`}
               style={{ backgroundColor: `${bgColor}10` }}
             >
               {item.icon && renderIcon(item.icon)}

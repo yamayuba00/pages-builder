@@ -197,14 +197,34 @@ const PageBuilder: React.FC = () => {
           });
         }
 
+        // Generate responsive classes based on settings
+        const getResponsiveClasses = () => {
+          const direction = props.layoutDirection === 'horizontal' ? 'flex-row' : 'flex-col';
+          
+          switch (props.responsiveView) {
+            case 'mobile':
+              return `flex ${direction} flex-wrap gap-${props.itemSpacing}`;
+            case 'tablet':
+              return props.layoutDirection === 'horizontal' 
+                ? `grid grid-cols-2 md:grid-cols-3 gap-${props.itemSpacing}`
+                : `flex flex-col gap-${props.itemSpacing}`;
+            case 'desktop':
+              return props.layoutDirection === 'horizontal'
+                ? `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-${props.itemSpacing}`
+                : `flex flex-col gap-${props.itemSpacing}`;
+            default:
+              return `flex ${direction} flex-wrap gap-${props.itemSpacing}`;
+          }
+        };
+
         return `
           <div style="background-color: ${props.bgColor}; color: ${props.textColor}; text-align: ${props.textAlign};" class="${props.width} ${props.padding} min-h-16">
             <div class="prose max-w-none" style="color: ${props.textColor};">
-              ${props.content ? `<div class="mb-4">${props.content}</div>` : ''}
+              ${props.content && props.content.trim() ? `<div class="mb-4">${props.content}</div>` : ''}
               
-              <div class="space-y-${props.itemSpacing}">
+              <div class="${getResponsiveClasses()}">
                 ${itemsToShow.map((item, index) => `
-                  <div class="flex flex-col ${props.itemAlignment} p-3 rounded-lg" style="background-color: ${props.bgColor}10;">
+                  <div class="flex flex-col ${props.itemAlignment} p-3 rounded-lg ${props.layoutDirection === 'horizontal' ? 'flex-1 min-w-0' : 'w-full'}" style="background-color: ${props.bgColor}10;">
                     ${item.icon ? `<svg class="mb-2" width="${props.iconSize}" height="${props.iconSize}" fill="none" stroke="${props.iconColor}" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>` : ''}
                     ${item.text ? `<h4 class="font-semibold mb-1" style="color: ${props.textColor}; font-size: ${props.textSize}px;">${item.text}</h4>` : ''}
                     ${item.description ? `<p class="opacity-80" style="color: ${props.textColor}; font-size: ${props.descriptionSize}px;">${item.description}</p>` : ''}
