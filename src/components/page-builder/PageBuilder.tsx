@@ -5,11 +5,13 @@ import ComponentPalette from './ComponentPalette';
 import ComponentEditor from './ComponentEditor';
 import BuilderCanvas from './BuilderCanvas';
 import CustomCodeEditor from './CustomCodeEditor';
+import { AIComponentGenerator } from './AIComponentGenerator';
 import { PageComponent, ComponentType } from '@/lib/page-builder-types';
 import { pageComponents } from '@/lib/page-components';
 import { PanelLeftOpen, Download, Code, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const PageBuilder: React.FC = () => {
   const [components, setComponents] = useState<PageComponent[]>([]);
@@ -18,6 +20,7 @@ const PageBuilder: React.FC = () => {
   const [showCustomCode, setShowCustomCode] = useState(false);
   const [customCSS, setCustomCSS] = useState('');
   const [customJS, setCustomJS] = useState('');
+  const [showAIGenerator, setShowAIGenerator] = useState(false);
   const { toast } = useToast();
 
   const handleAddComponent = (type: ComponentType) => {
@@ -38,6 +41,20 @@ const PageBuilder: React.FC = () => {
       title: "Komponen ditambahkan!",
       description: `${config.name} berhasil ditambahkan ke halaman.`,
     });
+  };
+
+  const handleAddComponents = (newComponents: PageComponent[]) => {
+    setComponents(prev => [...prev, ...newComponents]);
+    setShowAIGenerator(false);
+    
+    toast({
+      title: "Komponen AI berhasil ditambahkan!",
+      description: `${newComponents.length} komponen telah ditambahkan ke halaman.`,
+    });
+  };
+
+  const handleShowAIGenerator = () => {
+    setShowAIGenerator(true);
   };
 
   const handleSelectTemplate = (templateId: string) => {
@@ -117,19 +134,15 @@ const PageBuilder: React.FC = () => {
       const newComponents = [...prev];
       
       if (direction === 'up' && currentIndex > 0) {
-        // Swap with previous component
         [newComponents[currentIndex], newComponents[currentIndex - 1]] = 
         [newComponents[currentIndex - 1], newComponents[currentIndex]];
         
-        // Update orders
         newComponents[currentIndex - 1].order = currentIndex - 1;
         newComponents[currentIndex].order = currentIndex;
       } else if (direction === 'down' && currentIndex < newComponents.length - 1) {
-        // Swap with next component
         [newComponents[currentIndex], newComponents[currentIndex + 1]] = 
         [newComponents[currentIndex + 1], newComponents[currentIndex]];
         
-        // Update orders
         newComponents[currentIndex].order = currentIndex;
         newComponents[currentIndex + 1].order = currentIndex + 1;
       }
@@ -188,7 +201,6 @@ const PageBuilder: React.FC = () => {
         const numberOfItems = Math.min(parseInt(props.itemCount) || 1, 12);
         const itemsToShow = parsedItems.slice(0, numberOfItems);
 
-        // Fill remaining slots if needed
         while (itemsToShow.length < numberOfItems) {
           itemsToShow.push({
             icon: 'Circle',
@@ -197,7 +209,6 @@ const PageBuilder: React.FC = () => {
           });
         }
 
-        // Generate responsive classes based on settings
         const getResponsiveClasses = () => {
           const direction = props.layoutDirection === 'horizontal' ? 'flex-row' : 'flex-col';
           
@@ -234,6 +245,28 @@ const PageBuilder: React.FC = () => {
             </div>
           </div>
         `;
+
+      case 'grid':
+        return `
+<div style="background-color: ${props.bgColor};" class="w-full ${props.padding}">
+  <div class="${props.maxWidth} mx-auto">
+    <div class="grid ${props.breakpoints === 'responsive' ? `grid-cols-${props.mobileColumns} md:grid-cols-${props.tabletColumns} lg:grid-cols-${props.desktopColumns}` : `grid-cols-${props.columns}`} gap-${props.gap}">
+      ${props.gridItems.split('\n').filter((line: string) => line.trim()).map((item: string, index: number) => {
+        if (index % 2 === 0) {
+          const title = item.trim();
+          const description = props.gridItems.split('\n')[index + 1]?.trim() || '';
+          return `
+            <div style="background-color: ${props.itemBgColor}; color: ${props.itemTextColor};" class="${props.itemPadding} ${props.itemBorderRadius} shadow-sm hover:shadow-md transition-shadow">
+              <h3 class="font-semibold text-lg mb-2">${title}</h3>
+              <p class="text-sm opacity-80">${description}</p>
+            </div>
+          `;
+        }
+        return '';
+      }).join('')}
+    </div>
+  </div>
+</div>`;
 
       case 'navbar':
         const navMenuList = props.menuItems.split(',').map((item: string) => item.trim()).filter((item: string) => item);
@@ -680,6 +713,7 @@ ${componentsHTML}
                 <ComponentPalette 
                   onAddComponent={handleAddComponent} 
                   onSelectTemplate={handleSelectTemplate}
+                  onShowAIGenerator={handleShowAIGenerator}
                 />
               </div>
               {showCustomCode && (
@@ -732,6 +766,18 @@ ${componentsHTML}
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
+
+      <Dialog open={showAIGenerator} onOpenChange={setShowAIGenerator}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>AI Component Generator</DialogTitle>
+          </DialogHeader>
+          <AIComponentGenerator
+            existingComponents={components}
+            onAddComponents={handleAddComponents}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
