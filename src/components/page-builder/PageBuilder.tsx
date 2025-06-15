@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import ComponentPalette from './ComponentPalette';
 import ComponentEditor from './ComponentEditor';
 import BuilderCanvas from './BuilderCanvas';
 import CustomCodeEditor from './CustomCodeEditor';
 import { PageComponent, ComponentType } from '@/lib/page-builder-types';
 import { pageComponents } from '@/lib/page-components';
-import { PanelLeftOpen, Download, Code, Eye } from 'lucide-react';
+import { PanelLeftOpen, Download, Code, Eye, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 
@@ -17,6 +18,7 @@ const PageBuilder: React.FC = () => {
   const [showCustomCode, setShowCustomCode] = useState(false);
   const [customCSS, setCustomCSS] = useState('');
   const [customJS, setCustomJS] = useState('');
+  const [rows, setRows] = useState(1); // Track number of grid rows
   const { toast } = useToast();
 
   const handleAddComponent = (type: ComponentType) => {
@@ -25,38 +27,51 @@ const PageBuilder: React.FC = () => {
 
     // Find available space in grid
     let gridStart = 0;
-    let gridEnd = 11;
+    let gridEnd = 2; // Default 3 columns
+    let targetRow = 0;
     
-    // Try to find a spot that doesn't overlap
-    if (components.length > 0) {
-      const sortedComponents = components.sort((a, b) => a.order - b.order);
+    // Check each row for available space
+    for (let row = 0; row < rows; row++) {
+      const rowComponents = components.filter(c => Math.floor(c.order / 12) === row);
       let availableStart = 0;
       
-      for (const comp of sortedComponents) {
+      // Sort components in this row by grid position
+      const sortedRowComponents = rowComponents.sort((a, b) => (a.gridStart || 0) - (b.gridStart || 0));
+      
+      for (const comp of sortedRowComponents) {
         const compStart = comp.gridStart || 0;
         const compEnd = comp.gridEnd || 11;
         
         if (availableStart + 2 <= compStart) {
           gridStart = availableStart;
           gridEnd = Math.min(availableStart + 2, compStart - 1);
+          targetRow = row;
           break;
         }
         availableStart = compEnd + 1;
       }
       
-      if (availableStart <= 11) {
+      if (availableStart <= 9) { // Need at least 3 columns
         gridStart = availableStart;
         gridEnd = Math.min(availableStart + 2, 11);
+        targetRow = row;
+        break;
       }
-    } else {
-      gridEnd = 2; // Default to 3 columns for first component
+    }
+    
+    // If no space found in existing rows, add new row
+    if (gridStart + gridEnd > 11) {
+      gridStart = 0;
+      gridEnd = 2;
+      targetRow = rows;
+      setRows(prev => prev + 1);
     }
 
     const newComponent: PageComponent = {
       id: `${type}-${Date.now()}`,
       type,
       props: { ...config.defaultProps },
-      order: components.length,
+      order: targetRow * 12 + gridStart, // Position based on row and column
       gridStart,
       gridEnd,
     };
@@ -113,6 +128,14 @@ const PageBuilder: React.FC = () => {
   const handleSaveCustomCode = (css: string, js: string) => {
     setCustomCSS(css);
     setCustomJS(js);
+  };
+
+  const handleAddNewRow = () => {
+    setRows(prev => prev + 1);
+    toast({
+      title: "Baris baru ditambahkan!",
+      description: "Anda sekarang dapat menambahkan komponen ke baris baru.",
+    });
   };
 
   const selectedComponent = components.find(c => c.id === selectedComponentId) || null;
@@ -336,36 +359,20 @@ const PageBuilder: React.FC = () => {
     const sortedComponents = components.sort((a, b) => a.order - b.order);
     
     // Group components by rows for proper HTML structure
-    const rows: PageComponent[][] = [];
-    let currentRow: PageComponent[] = [];
-    let currentRowEnd = -1;
-
-    sortedComponents.forEach(component => {
-      const start = component.gridStart || 0;
-      const end = component.gridEnd || 11;
-      
-      if (start > currentRowEnd || currentRow.length === 0) {
-        if (currentRow.length > 0) {
-          rows.push(currentRow);
-        }
-        currentRow = [component];
-        currentRowEnd = end;
-      } else {
-        currentRow.push(component);
-        currentRowEnd = Math.max(currentRowEnd, end);
+    const componentRows: PageComponent[][] = [];
+    for (let row = 0; row < rows; row++) {
+      const rowComponents = sortedComponents.filter(c => Math.floor(c.order / 12) === row);
+      if (rowComponents.length > 0) {
+        componentRows.push(rowComponents);
       }
-    });
-    
-    if (currentRow.length > 0) {
-      rows.push(currentRow);
     }
 
     const generateComponentHTML = (component: PageComponent): string => {
-      // ... keep existing code (generateComponentHTML implementation) the same ...
+      // This would contain the same implementation as before
       return '<!-- Component HTML will be generated here -->';
     };
 
-    const rowsHTML = rows.map(row => {
+    const rowsHTML = componentRows.map(row => {
       const rowComponents = row.map(comp => {
         const start = comp.gridStart || 0;
         const end = comp.gridEnd || 11;
@@ -389,9 +396,6 @@ ${rowComponents}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landing Page - Generated by Page Builder</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Roboto:wght@100;300;400;500;700;900&family=Open+Sans:wght@300;400;500;600;700;800&family=Lato:wght@100;300;400;700;900&family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         .container {
             max-width: 1200px;
@@ -410,14 +414,12 @@ ${rowComponents}
         ${customCSS}
     </style>
 </head>
-<body style="margin: 0; padding: 0; font-family: Inter, system-ui, -apple-system, sans-serif;">
-    <!-- Generated by Page Builder Pro -->
+<body>
     <div class="container mx-auto">
 ${rowsHTML}
     </div>
     
     <script>
-        // Default functionality
         document.addEventListener('DOMContentLoaded', function() {
             // Add smooth scrolling for anchor links
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -464,6 +466,10 @@ ${rowsHTML}
       <header className="flex h-14 items-center gap-4 border-b bg-secondary/50 px-6">
         <h1 className="text-lg font-semibold">Page Builder Pro</h1>
         <div className="ml-auto flex gap-2">
+          <Button variant="outline" size="sm" onClick={handleAddNewRow}>
+            <Plus className="h-4 w-4 mr-2" />
+            Tambah Baris
+          </Button>
           <Button
             variant={showCustomCode ? 'default' : 'outline'}
             size="sm"
@@ -490,7 +496,7 @@ ${rowsHTML}
             onExpand={() => setIsLeftPanelCollapsed(false)}
             className={`transition-all duration-300 ${isLeftPanelCollapsed ? 'hidden' : 'block'}`}
           >
-            <div className="h-full overflow-auto">
+            <ScrollArea className="h-full">
               <ComponentPalette onAddComponent={handleAddComponent} />
               {showCustomCode && (
                 <CustomCodeEditor
@@ -499,7 +505,7 @@ ${rowsHTML}
                   onSave={handleSaveCustomCode}
                 />
               )}
-            </div>
+            </ScrollArea>
           </ResizablePanel>
           {!isLeftPanelCollapsed && <ResizableHandle withHandle />}
           <ResizablePanel defaultSize={60} minSize={30}>
@@ -527,10 +533,12 @@ ${rowsHTML}
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
-            <ComponentEditor
-              component={selectedComponent}
-              onPropChange={handlePropChange}
-            />
+            <ScrollArea className="h-full">
+              <ComponentEditor
+                component={selectedComponent}
+                onPropChange={handlePropChange}
+              />
+            </ScrollArea>
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>

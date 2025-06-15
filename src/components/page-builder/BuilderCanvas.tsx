@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { PageComponent } from '@/lib/page-builder-types';
 import ResizableComponent from './ResizableComponent';
+import { PageComponent } from '@/lib/page-builder-types';
 
 interface BuilderCanvasProps {
   components: PageComponent[];
@@ -20,79 +20,54 @@ const BuilderCanvas: React.FC<BuilderCanvasProps> = ({
   onResizeComponent,
   onEditComponent
 }) => {
-  const sortedComponents = components.sort((a, b) => a.order - b.order);
-
-  // Group components by rows
-  const rows: PageComponent[][] = [];
-  let currentRow: PageComponent[] = [];
-  let currentRowEnd = -1;
-
-  sortedComponents.forEach(component => {
-    const start = component.gridStart || 0;
-    const end = component.gridEnd || 11;
-    
-    // If this component starts after the current row ends, start a new row
-    if (start > currentRowEnd || currentRow.length === 0) {
-      if (currentRow.length > 0) {
-        rows.push(currentRow);
-      }
-      currentRow = [component];
-      currentRowEnd = end;
-    } else {
-      // Add to current row if there's space
-      currentRow.push(component);
-      currentRowEnd = Math.max(currentRowEnd, end);
-    }
-  });
-  
-  if (currentRow.length > 0) {
-    rows.push(currentRow);
-  }
+  // Generate grid cells for visual reference
+  const gridCells = Array.from({ length: 12 }, (_, i) => i);
 
   return (
-    <div className="p-4 min-h-96">
-      {rows.length === 0 ? (
-        <div className="flex items-center justify-center h-64 border-2 border-dashed border-gray-300 rounded-lg">
-          <div className="text-center">
-            <p className="text-gray-500 mb-2">Pilih komponen dari palette dan mulai membangun halaman Anda</p>
-            <div className="grid grid-cols-12 gap-1 max-w-md mx-auto mt-4">
-              {Array.from({ length: 12 }, (_, i) => (
-                <div key={i} className="h-4 bg-gray-200 rounded text-xs flex items-center justify-center text-gray-400">
-                  {i + 1}
-                </div>
-              ))}
-            </div>
-            <p className="text-xs text-gray-400 mt-2">Grid 12 kolom</p>
+    <div className="h-full overflow-auto bg-gray-50">
+      <div className="p-4">
+        {/* Grid Visual Reference */}
+        <div className="mb-4 bg-white rounded-lg p-4 shadow-sm">
+          <h3 className="text-sm font-medium text-gray-600 mb-2">Grid 12 Kolom</h3>
+          <div className="grid grid-cols-12 gap-1 mb-4">
+            {gridCells.map((cell) => (
+              <div
+                key={cell}
+                className="h-8 bg-blue-100 border border-blue-200 rounded flex items-center justify-center text-xs font-medium text-blue-600"
+              >
+                {cell + 1}
+              </div>
+            ))}
           </div>
         </div>
-      ) : (
-        <div className="space-y-4">
-          {rows.map((row, rowIndex) => (
-            <div key={rowIndex} className="grid grid-cols-12 gap-2 relative">
-              {/* Grid indicators */}
-              <div className="absolute -top-4 left-0 right-0 grid grid-cols-12 gap-2">
-                {Array.from({ length: 12 }, (_, i) => (
-                  <div key={i} className="h-2 bg-gray-100 rounded text-xs flex items-center justify-center text-gray-400">
-                    {i + 1}
-                  </div>
-                ))}
+
+        {/* Components Container */}
+        <div className="bg-white rounded-lg shadow-sm min-h-96">
+          <div className="grid grid-cols-12 gap-4 p-4 relative">
+            {components.map((component) => (
+              <ResizableComponent
+                key={component.id}
+                component={component}
+                isSelected={selectedComponentId === component.id}
+                onSelect={() => onSelectComponent(component.id)}
+                onDelete={() => onDeleteComponent(component.id)}
+                onResize={(gridStart, gridEnd) => onResizeComponent(component.id, gridStart, gridEnd)}
+                onEdit={() => onEditComponent(component.id)}
+              />
+            ))}
+            
+            {/* Empty State */}
+            {components.length === 0 && (
+              <div className="col-span-12 flex items-center justify-center h-64 border-2 border-dashed border-gray-300 rounded-lg">
+                <div className="text-center text-gray-500">
+                  <p className="text-lg font-medium mb-2">Mulai membangun halaman Anda</p>
+                  <p className="text-sm">Pilih komponen dari panel kiri untuk memulai</p>
+                </div>
               </div>
-              
-              {row.map((component) => (
-                <ResizableComponent
-                  key={component.id}
-                  component={component}
-                  isSelected={selectedComponentId === component.id}
-                  onSelect={() => onSelectComponent(component.id)}
-                  onDelete={() => onDeleteComponent(component.id)}
-                  onResize={(start, end) => onResizeComponent(component.id, start, end)}
-                  onEdit={() => onEditComponent(component.id)}
-                />
-              ))}
-            </div>
-          ))}
+            )}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
