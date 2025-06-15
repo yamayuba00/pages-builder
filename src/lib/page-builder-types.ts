@@ -26,6 +26,8 @@ export interface PageComponent {
   type: ComponentType;
   props: Record<string, any>;
   order: number;
+  gridStart?: number;
+  gridEnd?: number;
 }
 
 export interface ComponentConfig {
