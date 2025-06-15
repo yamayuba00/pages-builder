@@ -345,34 +345,6 @@ const PageBuilder: React.FC = () => {
   </div>
 </div>`;
 
-      case 'grid':
-        const gridCols = {
-          '1': 'grid-template-columns: repeat(1, minmax(0, 1fr));',
-          '2': 'grid-template-columns: repeat(2, minmax(0, 1fr));',
-          '3': 'grid-template-columns: repeat(3, minmax(0, 1fr));',
-          '4': 'grid-template-columns: repeat(4, minmax(0, 1fr));',
-          '6': 'grid-template-columns: repeat(6, minmax(0, 1fr));',
-          '12': 'grid-template-columns: repeat(12, minmax(0, 1fr));'
-        };
-        const gaps = {
-          '2': '0.5rem',
-          '4': '1rem',
-          '6': '1.5rem',
-          '8': '2rem'
-        };
-        return `
-<div style="background-color: ${props.bgColor};" class="w-full ${props.padding}">
-  <div class="${props.maxWidth} mx-auto">
-    <div style="display: grid; ${gridCols[props.columns as keyof typeof gridCols] || gridCols['3']} gap: ${gaps[props.gap as keyof typeof gaps] || '1rem'};">
-      ${Array.from({ length: parseInt(props.columns) }, (_, i) => `
-        <div class="bg-gray-100 p-4 rounded-lg" style="min-height: 8rem; display: flex; align-items: center; justify-content: center;">
-          <span class="text-gray-500">Grid Item ${i + 1}</span>
-        </div>
-      `).join('')}
-    </div>
-  </div>
-</div>`;
-
       default:
         return '';
     }
