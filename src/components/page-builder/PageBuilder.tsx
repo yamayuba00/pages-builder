@@ -29,8 +29,6 @@ const PageBuilder: React.FC = () => {
       type,
       props: { ...config.defaultProps },
       order: components.length,
-      gridStart: 0,
-      gridEnd: 11,
     };
 
     setComponents(prev => [...prev, newComponent]);
@@ -48,34 +46,33 @@ const PageBuilder: React.FC = () => {
     switch (templateId) {
       case 'landing-page':
         templateComponents = [
-          { type: 'navbar', gridStart: 0, gridEnd: 11 },
-          { type: 'hero', gridStart: 0, gridEnd: 11 },
-          { type: 'text', gridStart: 0, gridEnd: 7, props: { ...pageComponents.text.defaultProps, content: 'Tentang Kami\n\nKami adalah perusahaan yang berkomitmen memberikan solusi terbaik untuk kebutuhan digital Anda.' } },
-          { type: 'card', gridStart: 8, gridEnd: 11, props: { ...pageComponents.card.defaultProps, title: 'Kontak Info', content: 'Email: info@company.com\nTelp: +62 123 456 789' } },
+          { type: 'navbar' },
+          { type: 'hero' },
+          { type: 'text', props: { ...pageComponents.text.defaultProps, content: 'Tentang Kami\n\nKami adalah perusahaan yang berkomitmen memberikan solusi terbaik untuk kebutuhan digital Anda.' } },
+          { type: 'card', props: { ...pageComponents.card.defaultProps, title: 'Kontak Info', content: 'Email: info@company.com\nTelp: +62 123 456 789' } },
         ];
         break;
       case 'dashboard':
         templateComponents = [
-          { type: 'sidebar', gridStart: 0, gridEnd: 2 },
-          { type: 'stats', gridStart: 3, gridEnd: 5, props: { ...pageComponents.stats.defaultProps, title: 'Total Users', value: '1,234' } },
-          { type: 'stats', gridStart: 6, gridEnd: 8, props: { ...pageComponents.stats.defaultProps, title: 'Revenue', value: '$45,678' } },
-          { type: 'stats', gridStart: 9, gridEnd: 11, props: { ...pageComponents.stats.defaultProps, title: 'Orders', value: '567' } },
-          { type: 'table', gridStart: 3, gridEnd: 11 },
+          { type: 'sidebar' },
+          { type: 'stats', props: { ...pageComponents.stats.defaultProps, title: 'Total Users', value: '1,234' } },
+          { type: 'stats', props: { ...pageComponents.stats.defaultProps, title: 'Revenue', value: '$45,678' } },
+          { type: 'stats', props: { ...pageComponents.stats.defaultProps, title: 'Orders', value: '567' } },
+          { type: 'table' },
         ];
         break;
       case 'portfolio':
         templateComponents = [
-          { type: 'navbar', gridStart: 0, gridEnd: 11 },
-          { type: 'hero', gridStart: 0, gridEnd: 11, props: { ...pageComponents.hero.defaultProps, title: 'Portfolio Saya', subtitle: 'Kumpulan karya dan proyek terbaik' } },
-          { type: 'grid', gridStart: 0, gridEnd: 11, props: { ...pageComponents.grid.defaultProps, columns: '3' } },
-          { type: 'form', gridStart: 0, gridEnd: 11, props: { ...pageComponents.form.defaultProps, title: 'Hubungi Saya' } },
+          { type: 'navbar' },
+          { type: 'hero', props: { ...pageComponents.hero.defaultProps, title: 'Portfolio Saya', subtitle: 'Kumpulan karya dan proyek terbaik' } },
+          { type: 'form', props: { ...pageComponents.form.defaultProps, title: 'Hubungi Saya' } },
         ];
         break;
       case 'blog':
         templateComponents = [
-          { type: 'navbar', gridStart: 0, gridEnd: 11 },
-          { type: 'text', gridStart: 0, gridEnd: 7, props: { ...pageComponents.text.defaultProps, content: 'Artikel Blog\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' } },
-          { type: 'card', gridStart: 8, gridEnd: 11, props: { ...pageComponents.card.defaultProps, title: 'Artikel Terbaru', content: '• Tips & Tricks\n• Tutorial\n• News Update' } },
+          { type: 'navbar' },
+          { type: 'text', props: { ...pageComponents.text.defaultProps, content: 'Artikel Blog\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' } },
+          { type: 'card', props: { ...pageComponents.card.defaultProps, title: 'Artikel Terbaru', content: '• Tips & Tricks\n• Tutorial\n• News Update' } },
         ];
         break;
       default:
@@ -87,8 +84,6 @@ const PageBuilder: React.FC = () => {
       type: comp.type!,
       props: comp.props || { ...pageComponents[comp.type!].defaultProps },
       order: index,
-      gridStart: comp.gridStart || 0,
-      gridEnd: comp.gridEnd || 11,
     }));
 
     setComponents(newComponents);
@@ -115,13 +110,7 @@ const PageBuilder: React.FC = () => {
   };
 
   const handleResizeComponent = (id: string, gridStart: number, gridEnd: number) => {
-    setComponents(prev => 
-      prev.map(comp => 
-        comp.id === id 
-          ? { ...comp, gridStart, gridEnd }
-          : comp
-      )
-    );
+    // Grid system removed, this function can be simplified or removed
   };
 
   const handleEditComponent = (id: string) => {
@@ -364,14 +353,16 @@ const PageBuilder: React.FC = () => {
     const sortedComponents = components.sort((a, b) => a.order - b.order);
     
     const componentsHTML = sortedComponents.map(comp => {
-      const start = comp.gridStart || 0;
-      const end = comp.gridEnd || 11;
-      const span = end - start + 1;
-      const startCol = start + 1;
+      const ComponentToRender = pageComponents[comp.type]?.component;
+      if (!ComponentToRender) return '';
       
-      return `  <div class="col-start-${startCol} col-span-${span}">
-${generateComponentHTML(comp)}
-  </div>`;
+      // Simple HTML generation without grid system
+      return `<div class="component-wrapper">
+        <!-- ${pageComponents[comp.type]?.name || comp.type} -->
+        <div class="component-content">
+          <!-- Component content would be rendered here -->
+        </div>
+      </div>`;
     }).join('\n');
 
     const html = `<!DOCTYPE html>
@@ -388,19 +379,17 @@ ${generateComponentHTML(comp)}
             padding: 0 1rem;
         }
         
-        /* Grid Classes */
-        ${Array.from({ length: 12 }, (_, i) => {
-          const col = i + 1;
-          return `.col-start-${col} { grid-column-start: ${col}; }
-.col-span-${col} { grid-column: span ${col} / span ${col}; }`;
-        }).join('\n        ')}
+        .component-wrapper {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
         
         /* Custom CSS */
         ${customCSS}
     </style>
 </head>
 <body>
-    <div class="grid grid-cols-12 gap-4">
+    <div class="page-container">
 ${componentsHTML}
     </div>
     
@@ -526,6 +515,7 @@ ${componentsHTML}
                 <ComponentEditor
                   component={selectedComponent}
                   onPropChange={handlePropChange}
+                  onDeleteComponent={handleDeleteComponent}
                 />
               </ScrollArea>
             </div>

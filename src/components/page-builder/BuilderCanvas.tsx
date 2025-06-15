@@ -1,7 +1,9 @@
 
 import React from 'react';
-import ResizableComponent from './ResizableComponent';
 import { PageComponent } from '@/lib/page-builder-types';
+import { pageComponents } from '@/lib/page-components';
+import { Button } from '@/components/ui/button';
+import { Trash2, Settings, MoveUp, MoveDown } from 'lucide-react';
 
 interface BuilderCanvasProps {
   components: PageComponent[];
@@ -20,43 +22,113 @@ const BuilderCanvas: React.FC<BuilderCanvasProps> = ({
   onResizeComponent,
   onEditComponent
 }) => {
+  const handleMoveComponent = (id: string, direction: 'up' | 'down') => {
+    const currentIndex = components.findIndex(comp => comp.id === id);
+    if (direction === 'up' && currentIndex > 0) {
+      // Move up logic can be implemented if needed
+    } else if (direction === 'down' && currentIndex < components.length - 1) {
+      // Move down logic can be implemented if needed
+    }
+  };
+
   return (
     <div className="h-full flex flex-col bg-gray-50">
-      {/* Visual Grid Reference - Fixed Header */}
-      <div className="bg-white border-b shadow-sm z-10 flex-shrink-0">
-        <div className="grid grid-cols-12 gap-1 p-2">
-          {Array.from({ length: 12 }, (_, i) => (
-            <div
-              key={i}
-              className="h-6 bg-blue-100 border border-blue-200 rounded flex items-center justify-center text-xs font-medium text-blue-600"
-            >
-              {i + 1}
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Scrollable Components Container */}
       <div className="flex-1 overflow-y-auto">
-        <div className="bg-white min-h-full">
-          <div className="grid grid-cols-12 gap-4 p-4 relative">
+        <div className="bg-white min-h-full p-4">
+          <div className="space-y-4">
             {components
               .sort((a, b) => a.order - b.order)
-              .map((component) => (
-                <ResizableComponent
-                  key={component.id}
-                  component={component}
-                  isSelected={selectedComponentId === component.id}
-                  onSelect={() => onSelectComponent(component.id)}
-                  onDelete={() => onDeleteComponent(component.id)}
-                  onResize={(gridStart, gridEnd) => onResizeComponent(component.id, gridStart, gridEnd)}
-                  onEdit={() => onEditComponent(component.id)}
-                />
-              ))}
+              .map((component) => {
+                const config = pageComponents[component.type];
+                if (!config) return null;
+
+                const ComponentToRender = config.component;
+                const isSelected = selectedComponentId === component.id;
+
+                return (
+                  <div
+                    key={component.id}
+                    className={`relative group border rounded-lg overflow-hidden bg-white hover:shadow-md transition-all ${
+                      isSelected ? 'ring-2 ring-blue-500 ring-offset-2' : 'border-gray-200'
+                    } ${component.type === 'sidebar' ? 'h-96' : 'min-h-24'}`}
+                    onClick={() => onSelectComponent(component.id)}
+                  >
+                    {/* Component Content */}
+                    <div className={component.type === 'sidebar' ? 'h-full overflow-hidden' : ''}>
+                      <ComponentToRender {...component.props} />
+                    </div>
+
+                    {/* Hover Overlay */}
+                    {!isSelected && (
+                      <div className="absolute inset-0 bg-blue-100 opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none" />
+                    )}
+
+                    {/* Component Label */}
+                    <div className="absolute top-2 left-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                      {config.name}
+                    </div>
+
+                    {/* Selection Controls */}
+                    {isSelected && (
+                      <div className="absolute top-2 right-2 flex gap-1 bg-white rounded-lg shadow-lg p-1">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 w-8 p-0"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMoveComponent(component.id, 'up');
+                          }}
+                          title="Move Up"
+                        >
+                          <MoveUp className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 w-8 p-0"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMoveComponent(component.id, 'down');
+                          }}
+                          title="Move Down"
+                        >
+                          <MoveDown className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 w-8 p-0"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onEditComponent(component.id);
+                          }}
+                          title="Edit Component"
+                        >
+                          <Settings className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 w-8 p-0 text-red-600 hover:bg-red-50"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDeleteComponent(component.id);
+                          }}
+                          title="Delete Component"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             
             {/* Empty State */}
             {components.length === 0 && (
-              <div className="col-span-12 flex items-center justify-center h-96 border-2 border-dashed border-gray-300 rounded-lg">
+              <div className="flex items-center justify-center h-96 border-2 border-dashed border-gray-300 rounded-lg">
                 <div className="text-center text-gray-500">
                   <p className="text-lg font-medium mb-2">Mulai membangun halaman Anda</p>
                   <p className="text-sm">Pilih komponen dari panel kiri untuk memulai</p>

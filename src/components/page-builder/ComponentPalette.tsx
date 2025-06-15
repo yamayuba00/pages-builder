@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus, Layout, Type, Image, Menu, Grid, CreditCard, MousePointer, BarChart, Table, Sidebar, TrendingUp } from 'lucide-react';
+import { Plus, Layout, Type, Image, Menu, Grid, CreditCard, MousePointer, BarChart, Table, Sidebar, TrendingUp, Header, Minus, Quote, DollarSign, HelpCircle, Mail } from 'lucide-react';
 import { ComponentType } from '@/lib/page-builder-types';
 import { pageComponents } from '@/lib/page-components';
 
@@ -20,16 +21,16 @@ const componentIcons: Record<ComponentType, any> = {
   table: Table,
   chart: BarChart,
   sidebar: Sidebar,
-  header: Layout,
+  header: Header,
   footer: Layout,
   form: Type,
   list: Type,
-  divider: Type,
+  divider: Minus,
   stats: TrendingUp,
-  testimonial: Type,
-  pricing: CreditCard,
-  faq: Type,
-  contact: Type,
+  testimonial: Quote,
+  pricing: DollarSign,
+  faq: HelpCircle,
+  contact: Mail,
 };
 
 const categories = [
@@ -56,6 +57,8 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({ onAddComponent, onS
     { id: 'dashboard', name: 'Dashboard', description: 'Sidebar + Stats + Table' },
     { id: 'portfolio', name: 'Portfolio', description: 'Header + Gallery + Contact' },
     { id: 'blog', name: 'Blog', description: 'Navbar + Article + Sidebar' },
+    { id: 'ecommerce', name: 'E-Commerce', description: 'Navbar + Products + Pricing' },
+    { id: 'corporate', name: 'Corporate', description: 'Header + About + Testimonials' },
   ];
 
   return (
@@ -130,7 +133,7 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({ onAddComponent, onS
           <div className="mt-4 p-3 bg-muted rounded-lg">
             <p className="text-sm text-muted-foreground">
               <strong>Tips:</strong> Klik komponen untuk menambahkannya ke canvas. 
-              Setelah ditambahkan, Anda bisa resize dengan drag handle di kiri/kanan komponen.
+              Komponen dapat dikustomisasi sepenuhnya melalui panel editor di sebelah kanan.
             </p>
           </div>
         )}

@@ -6,13 +6,20 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Trash2, Settings } from 'lucide-react';
 
 interface ComponentEditorProps {
   component: PageComponent | null;
   onPropChange: (componentId: string, key: string, value: any) => void;
+  onDeleteComponent?: (componentId: string) => void;
 }
 
-const ComponentEditor: React.FC<ComponentEditorProps> = ({ component, onPropChange }) => {
+const ComponentEditor: React.FC<ComponentEditorProps> = ({ 
+  component, 
+  onPropChange,
+  onDeleteComponent 
+}) => {
   if (!component) {
     return (
       <div className="p-4 h-full bg-secondary/50">
@@ -27,9 +34,23 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({ component, onPropChan
 
   return (
     <div className="p-4 h-full bg-secondary/50 overflow-y-auto custom-scrollbar">
-      <h2 className="text-lg font-semibold mb-4 text-foreground">
-        Edit {config.name}
-      </h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold text-foreground">
+          Edit {config.name}
+        </h2>
+        {onDeleteComponent && (
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={() => onDeleteComponent(component.id)}
+            className="flex items-center gap-2"
+          >
+            <Trash2 className="h-4 w-4" />
+            Hapus
+          </Button>
+        )}
+      </div>
+      
       <div className="space-y-4">
         {config.propsConfig.map((propConfig) => (
           <div key={propConfig.key} className="grid w-full items-center gap-1.5">
