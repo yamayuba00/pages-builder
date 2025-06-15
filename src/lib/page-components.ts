@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ComponentConfig } from './page-builder-types';
 import { NavbarTemplate } from '@/components/page-builder/templates/Navbar';
@@ -109,7 +110,7 @@ export const pageComponents: Record<string, ComponentConfig> = {
       { key: 'itemCount', label: 'Number of Items', type: 'select', options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'] },
       { key: 'items', label: 'Items Content (Icon/Text/Description per 3 lines)', type: 'textarea' },
       { key: 'iconSize', label: 'Icon Size', type: 'select', options: ['16', '20', '24', '28', '32', '40', '48'] },
-      { key: 'iconColor', label: 'Icon Color', type::color' },
+      { key: 'iconColor', label: 'Icon Color', type: 'color' },
       { key: 'textSize', label: 'Text Size', type: 'select', options: ['12', '14', '16', '18', '20', '24', '28', '32'] },
       { key: 'descriptionSize', label: 'Description Size', type: 'select', options: ['10', '12', '14', '16', '18', '20'] },
       { key: 'itemSpacing', label: 'Item Spacing', type: 'select', options: ['2', '3', '4', '6', '8'] },
