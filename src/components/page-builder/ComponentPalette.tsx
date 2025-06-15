@@ -22,8 +22,9 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({
     {
       name: 'Layout',
       icon: Layout,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
+      color: 'text-blue-700',
+      bgColor: 'bg-blue-100/80',
+      hoverColor: 'hover:bg-blue-200/60',
       components: [
         { type: 'navbar' as ComponentType, name: 'Navigation', icon: Layout },
         { type: 'container' as ComponentType, name: 'Container', icon: Container },
@@ -37,8 +38,9 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({
     {
       name: 'Content',
       icon: Type,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
+      color: 'text-emerald-700',
+      bgColor: 'bg-emerald-100/80',
+      hoverColor: 'hover:bg-emerald-200/60',
       components: [
         { type: 'hero' as ComponentType, name: 'Hero Section', icon: Square },
         { type: 'heading' as ComponentType, name: 'Heading', icon: Heading },
@@ -53,8 +55,9 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({
     {
       name: 'Interactive',
       icon: Square,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
+      color: 'text-purple-700',
+      bgColor: 'bg-purple-100/80',
+      hoverColor: 'hover:bg-purple-200/60',
       components: [
         { type: 'button' as ComponentType, name: 'Button', icon: Square },
         { type: 'form' as ComponentType, name: 'Form', icon: FileText },
@@ -65,8 +68,9 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({
     {
       name: 'Media & Data',
       icon: Image,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50',
+      color: 'text-orange-700',
+      bgColor: 'bg-orange-100/80',
+      hoverColor: 'hover:bg-orange-200/60',
       components: [
         { type: 'image' as ComponentType, name: 'Image', icon: Image },
         { type: 'card' as ComponentType, name: 'Card', icon: Square },
@@ -108,15 +112,15 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({
   ];
 
   return (
-    <div className="h-full flex flex-col bg-gradient-to-b from-gray-50 to-white">
+    <div className="h-full flex flex-col bg-gradient-to-br from-blue-50 via-slate-50 to-blue-100">
       {/* Header with Tabs */}
-      <div className="flex-shrink-0 border-b bg-white shadow-sm">
+      <div className="flex-shrink-0 border-b bg-blue-50/90 shadow-sm backdrop-blur-sm">
         <div className="flex">
           <Button
             variant={activeTab === 'components' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setActiveTab('components')}
-            className="flex-1 rounded-none border-r"
+            className="flex-1 rounded-none border-r border-blue-200/50"
           >
             <Layout className="h-4 w-4 mr-2" />
             Components
@@ -141,7 +145,7 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({
               <>
                 {componentCategories.map((category) => (
                   <div key={category.name} className="space-y-3">
-                    <div className={`flex items-center gap-2 p-2 rounded-lg ${category.bgColor}`}>
+                    <div className={`flex items-center gap-2 p-2 rounded-lg ${category.bgColor} border border-blue-200/30`}>
                       <category.icon className={`h-4 w-4 ${category.color}`} />
                       <h3 className={`font-semibold text-sm ${category.color}`}>{category.name}</h3>
                     </div>
@@ -152,10 +156,10 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({
                           variant="ghost"
                           size="sm"
                           onClick={() => onAddComponent(comp.type)}
-                          className="h-auto p-3 flex items-center gap-3 text-left justify-start hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all duration-200"
+                          className={`h-auto p-3 flex items-center gap-3 text-left justify-start bg-blue-50/50 hover:bg-blue-100/70 hover:border-blue-300/50 border border-blue-200/30 transition-all duration-200`}
                         >
-                          <comp.icon className="h-4 w-4 text-gray-500" />
-                          <span className="text-sm font-medium text-gray-700">{comp.name}</span>
+                          <comp.icon className="h-4 w-4 text-blue-600" />
+                          <span className="text-sm font-medium text-blue-800">{comp.name}</span>
                         </Button>
                       ))}
                     </div>
@@ -163,21 +167,21 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({
                 ))}
                 
                 {/* AI Generator Coming Soon */}
-                <div className="border-t pt-6 mt-8">
-                  <div className="bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 rounded-xl p-4 border border-purple-100">
+                <div className="border-t border-blue-200/50 pt-6 mt-8">
+                  <div className="bg-gradient-to-br from-blue-100/80 via-indigo-50/90 to-purple-100/80 rounded-xl p-4 border border-blue-200/40">
                     <div className="flex items-center gap-2 mb-3">
-                      <Sparkles className="h-5 w-5 text-purple-500" />
-                      <h3 className="font-semibold text-sm text-purple-700">AI Component Generator</h3>
-                      <span className="px-2 py-1 bg-purple-100 text-purple-600 text-xs rounded-full font-medium">Coming Soon</span>
+                      <Sparkles className="h-5 w-5 text-blue-600" />
+                      <h3 className="font-semibold text-sm text-blue-800">AI Component Generator</h3>
+                      <span className="px-2 py-1 bg-blue-200/60 text-blue-700 text-xs rounded-full font-medium">Coming Soon</span>
                     </div>
-                    <p className="text-xs text-gray-600 mb-4 leading-relaxed">
+                    <p className="text-xs text-blue-700 mb-4 leading-relaxed">
                       Generate custom components with AI! Simply describe what you need and watch as intelligent algorithms create the perfect component for your page.
                     </p>
                     <Button 
                       variant="outline" 
                       size="sm" 
                       disabled 
-                      className="w-full opacity-60 bg-white/50"
+                      className="w-full opacity-60 bg-blue-50/50 border-blue-300/50"
                     >
                       <Sparkles className="h-3 w-3 mr-2" />
                       Generate Component
@@ -188,20 +192,20 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({
             ) : (
               <div className="space-y-4">
                 <div className="mb-6">
-                  <h3 className="font-semibold text-lg mb-2 text-gray-800">Ready-to-use Templates</h3>
-                  <p className="text-sm text-gray-600">Jumpstart your project with professional templates</p>
+                  <h3 className="font-semibold text-lg mb-2 text-blue-800">Ready-to-use Templates</h3>
+                  <p className="text-sm text-blue-600">Jumpstart your project with professional templates</p>
                 </div>
                 {templates.map((template) => (
                   <Button
                     key={template.id}
                     variant="outline"
                     onClick={() => onSelectTemplate(template.id)}
-                    className="w-full h-auto p-4 flex items-start gap-4 text-left hover:bg-blue-50 hover:border-blue-200 transition-all duration-200 border-gray-200"
+                    className="w-full h-auto p-4 flex items-start gap-4 text-left bg-blue-50/50 hover:bg-blue-100/70 hover:border-blue-300/50 transition-all duration-200 border-blue-200/40"
                   >
                     <template.icon className={`h-6 w-6 ${template.color} flex-shrink-0 mt-1`} />
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-sm text-gray-800 mb-1">{template.name}</h4>
-                      <p className="text-xs text-gray-600 leading-relaxed">{template.description}</p>
+                      <h4 className="font-semibold text-sm text-blue-800 mb-1">{template.name}</h4>
+                      <p className="text-xs text-blue-600 leading-relaxed">{template.description}</p>
                     </div>
                   </Button>
                 ))}
