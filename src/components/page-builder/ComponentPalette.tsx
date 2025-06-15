@@ -2,16 +2,21 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Layout, Type, Image, Square, BarChart3, Table, Sidebar, Layers, FileText, CreditCard, MessageSquare, Star, DollarSign, HelpCircle, Mail, Minus, Container, Columns, Hash, Heading, Quote, Code, Link2, ChevronDown } from 'lucide-react';
+import { Layout, Type, Image, Square, BarChart3, Table, Sidebar, Layers, FileText, CreditCard, MessageSquare, Star, DollarSign, HelpCircle, Mail, Minus, Container, Columns, Hash, Heading, Quote, Code, Link2, ChevronDown, Grid, Sparkles } from 'lucide-react';
 import { ComponentType } from '@/lib/page-builder-types';
 
 interface ComponentPaletteProps {
   onAddComponent: (type: ComponentType) => void;
   onSelectTemplate: (templateId: string) => void;
+  onShowAIGenerator: () => void;
 }
 
-const ComponentPalette: React.FC<ComponentPaletteProps> = ({ onAddComponent, onSelectTemplate }) => {
-  const [activeTab, setActiveTab] = useState<'components' | 'templates'>('components');
+const ComponentPalette: React.FC<ComponentPaletteProps> = ({ 
+  onAddComponent, 
+  onSelectTemplate, 
+  onShowAIGenerator 
+}) => {
+  const [activeTab, setActiveTab] = useState<'components' | 'templates' | 'ai'>('components');
 
   const componentCategories = [
     {
@@ -22,6 +27,7 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({ onAddComponent, onS
         { type: 'container' as ComponentType, name: 'Container', icon: Container },
         { type: 'row' as ComponentType, name: 'Row', icon: Minus },
         { type: 'column' as ComponentType, name: 'Column', icon: Columns },
+        { type: 'grid' as ComponentType, name: 'Grid Layout', icon: Grid },
         { type: 'spacer' as ComponentType, name: 'Spacer', icon: Minus },
         { type: 'sidebar' as ComponentType, name: 'Sidebar', icon: Sidebar },
       ]
@@ -77,7 +83,7 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({ onAddComponent, onS
             variant={activeTab === 'components' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setActiveTab('components')}
-            className="flex-1 rounded-none"
+            className="flex-1 rounded-none text-xs"
           >
             Components
           </Button>
@@ -85,9 +91,18 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({ onAddComponent, onS
             variant={activeTab === 'templates' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setActiveTab('templates')}
-            className="flex-1 rounded-none"
+            className="flex-1 rounded-none text-xs"
           >
             Templates
+          </Button>
+          <Button
+            variant={activeTab === 'ai' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setActiveTab('ai')}
+            className="flex-1 rounded-none text-xs"
+          >
+            <Sparkles className="h-3 w-3 mr-1" />
+            AI
           </Button>
         </div>
       </div>
@@ -120,7 +135,7 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({ onAddComponent, onS
                   </div>
                 ))}
               </div>
-            ) : (
+            ) : activeTab === 'templates' ? (
               <div className="space-y-3">
                 <h3 className="font-medium text-sm mb-4">Ready-to-use Templates</h3>
                 {templates.map((template) => (
@@ -134,6 +149,30 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({ onAddComponent, onS
                     <span className="text-xs text-muted-foreground">{template.description}</span>
                   </Button>
                 ))}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="text-center">
+                  <Sparkles className="h-12 w-12 mx-auto text-purple-600 mb-3" />
+                  <h3 className="font-medium text-sm mb-2">AI Component Generator</h3>
+                  <p className="text-xs text-muted-foreground mb-4">
+                    Describe what you want to build and let AI generate the components for you
+                  </p>
+                  <Button onClick={onShowAIGenerator} className="w-full">
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Generate with AI
+                  </Button>
+                </div>
+                
+                <div className="space-y-2 text-xs text-muted-foreground">
+                  <p className="font-medium">Examples you can try:</p>
+                  <ul className="space-y-1 ml-2">
+                    <li>• "Create a modern landing page"</li>
+                    <li>• "Build a contact form section"</li>
+                    <li>• "Make an about us page"</li>
+                    <li>• "Create a pricing table"</li>
+                  </ul>
+                </div>
               </div>
             )}
           </div>

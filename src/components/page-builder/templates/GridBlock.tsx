@@ -7,7 +7,15 @@ interface GridBlockProps {
   maxWidth: string;
   padding: string;
   bgColor: string;
-  children?: React.ReactNode;
+  mobileColumns: string;
+  tabletColumns: string;
+  desktopColumns: string;
+  breakpoints: string;
+  gridItems: string;
+  itemBgColor: string;
+  itemTextColor: string;
+  itemPadding: string;
+  itemBorderRadius: string;
 }
 
 export const GridBlockTemplate: React.FC<GridBlockProps> = ({
@@ -15,38 +23,68 @@ export const GridBlockTemplate: React.FC<GridBlockProps> = ({
   gap,
   maxWidth,
   padding,
-  bgColor
+  bgColor,
+  mobileColumns,
+  tabletColumns,
+  desktopColumns,
+  breakpoints,
+  gridItems,
+  itemBgColor,
+  itemTextColor,
+  itemPadding,
+  itemBorderRadius
 }) => {
-  const getGridClass = (cols: string) => {
-    const colMap: Record<string, string> = {
-      '1': 'grid-cols-1',
-      '2': 'grid-cols-2',
-      '3': 'grid-cols-3',
-      '4': 'grid-cols-4',
-      '6': 'grid-cols-6',
-      '12': 'grid-cols-12'
-    };
-    return colMap[cols] || 'grid-cols-3';
+  const parseGridItems = (itemsString: string) => {
+    try {
+      const lines = itemsString.split('\n').filter(line => line.trim());
+      const parsedItems = [];
+      
+      for (let i = 0; i < lines.length; i += 2) {
+        const item = {
+          title: lines[i]?.trim() || `Item ${Math.floor(i/2) + 1}`,
+          description: lines[i + 1]?.trim() || 'Description'
+        };
+        parsedItems.push(item);
+      }
+      
+      return parsedItems;
+    } catch (error) {
+      return [
+        { title: 'Item 1', description: 'Description for item 1' },
+        { title: 'Item 2', description: 'Description for item 2' },
+        { title: 'Item 3', description: 'Description for item 3' }
+      ];
+    }
   };
 
-  const getGapClass = (gapSize: string) => {
-    const gapMap: Record<string, string> = {
-      '2': 'gap-2',
-      '4': 'gap-4',
-      '6': 'gap-6',
-      '8': 'gap-8'
-    };
-    return gapMap[gapSize] || 'gap-4';
+  const getGridClasses = () => {
+    if (breakpoints === 'responsive') {
+      const mobileClass = `grid-cols-${mobileColumns}`;
+      const tabletClass = `md:grid-cols-${tabletColumns}`;
+      const desktopClass = `lg:grid-cols-${desktopColumns}`;
+      return `grid ${mobileClass} ${tabletClass} ${desktopClass} gap-${gap}`;
+    } else {
+      return `grid grid-cols-${columns} gap-${gap}`;
+    }
   };
+
+  const items = parseGridItems(gridItems);
 
   return (
     <div style={{ backgroundColor: bgColor }} className={`w-full ${padding}`}>
       <div className={`${maxWidth} mx-auto`}>
-        <div className={`grid ${getGridClass(columns)} ${getGapClass(gap)}`}>
-          {/* Placeholder content for grid items */}
-          {Array.from({ length: parseInt(columns) }, (_, i) => (
-            <div key={i} className="bg-gray-100 p-4 rounded-lg min-h-32 flex items-center justify-center">
-              <span className="text-gray-500">Grid Item {i + 1}</span>
+        <div className={getGridClasses()}>
+          {items.map((item, index) => (
+            <div
+              key={index}
+              style={{ 
+                backgroundColor: itemBgColor,
+                color: itemTextColor
+              }}
+              className={`${itemPadding} ${itemBorderRadius} shadow-sm hover:shadow-md transition-shadow`}
+            >
+              <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
+              <p className="text-sm opacity-80">{item.description}</p>
             </div>
           ))}
         </div>

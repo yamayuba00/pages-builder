@@ -1,4 +1,3 @@
-
 export type ComponentType = 
   | 'navbar' 
   | 'hero' 
@@ -29,7 +28,8 @@ export type ComponentType =
   | 'code'
   | 'link'
   | 'tabs'
-  | 'accordion';
+  | 'accordion'
+  | 'grid';
 
 export interface PageComponent {
   id: string;

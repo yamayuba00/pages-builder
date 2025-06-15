@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ComponentConfig } from './page-builder-types';
 import { NavbarTemplate } from '@/components/page-builder/templates/Navbar';
@@ -23,9 +22,11 @@ import { CodeBlockTemplate } from '@/components/page-builder/templates/CodeBlock
 import { LinkBlockTemplate } from '@/components/page-builder/templates/LinkBlock';
 import { TabsBlockTemplate } from '@/components/page-builder/templates/TabsBlock';
 import { AccordionBlockTemplate } from '@/components/page-builder/templates/AccordionBlock';
+import { GridBlockTemplate } from '@/components/page-builder/templates/GridBlock';
 
 export const pageComponents: Record<string, ComponentConfig> = {
   // Layout Components
+  
   container: {
     type: 'container',
     name: 'Container',
@@ -119,6 +120,45 @@ export const pageComponents: Record<string, ComponentConfig> = {
       { key: 'responsiveView', label: 'Responsive View', type: 'select', options: ['mobile', 'tablet', 'desktop'] }
     ],
     component: ColumnBlockTemplate,
+  },
+
+  grid: {
+    type: 'grid',
+    name: 'Grid Layout',
+    category: 'layout',
+    component: GridBlockTemplate,
+    defaultProps: {
+      columns: '3',
+      gap: '4',
+      maxWidth: 'max-w-6xl',
+      padding: 'py-8 px-4',
+      bgColor: '#ffffff',
+      mobileColumns: '1',
+      tabletColumns: '2',
+      desktopColumns: '3',
+      breakpoints: 'responsive',
+      gridItems: 'Item 1\nDescription for item 1\n\nItem 2\nDescription for item 2\n\nItem 3\nDescription for item 3',
+      itemBgColor: '#f8fafc',
+      itemTextColor: '#374151',
+      itemPadding: 'p-6',
+      itemBorderRadius: 'rounded-lg'
+    },
+    propsConfig: [
+      { key: 'breakpoints', label: 'Responsive Mode', type: 'select', options: ['responsive', 'fixed'] },
+      { key: 'mobileColumns', label: 'Mobile Columns', type: 'select', options: ['1', '2', '3'] },
+      { key: 'tabletColumns', label: 'Tablet Columns', type: 'select', options: ['1', '2', '3', '4'] },
+      { key: 'desktopColumns', label: 'Desktop Columns', type: 'select', options: ['1', '2', '3', '4', '5', '6'] },
+      { key: 'columns', label: 'Fixed Columns', type: 'select', options: ['1', '2', '3', '4', '5', '6'] },
+      { key: 'gap', label: 'Gap', type: 'select', options: ['2', '4', '6', '8', '12'] },
+      { key: 'maxWidth', label: 'Max Width', type: 'select', options: ['max-w-sm', 'max-w-md', 'max-w-lg', 'max-w-xl', 'max-w-2xl', 'max-w-4xl', 'max-w-6xl', 'max-w-full'] },
+      { key: 'padding', label: 'Padding', type: 'select', options: ['py-4 px-2', 'py-6 px-4', 'py-8 px-4', 'py-12 px-6'] },
+      { key: 'bgColor', label: 'Background Color', type: 'color' },
+      { key: 'gridItems', label: 'Grid Items (Title/Description per 2 lines)', type: 'textarea' },
+      { key: 'itemBgColor', label: 'Item Background Color', type: 'color' },
+      { key: 'itemTextColor', label: 'Item Text Color', type: 'color' },
+      { key: 'itemPadding', label: 'Item Padding', type: 'select', options: ['p-2', 'p-4', 'p-6', 'p-8'] },
+      { key: 'itemBorderRadius', label: 'Item Border Radius', type: 'select', options: ['rounded-none', 'rounded-md', 'rounded-lg', 'rounded-xl'] }
+    ]
   },
 
   spacer: {
@@ -323,7 +363,7 @@ export const pageComponents: Record<string, ComponentConfig> = {
       { key: 'target', label: 'Target', type: 'select', options: ['_self', '_blank', '_parent', '_top'] },
       { key: 'textColor', label: 'Text Color', type: 'color' },
       { key: 'hoverColor', label: 'Hover Color', type: 'color' },
-      { key: 'fontSize', label: 'Font Size (px)', type: 'number' },
+      { key: 'fontSize', label: 'Font Size', type: 'number' },
       { key: 'fontWeight', label: 'Font Weight', type: 'select', options: ['400', '500', '600', '700'] },
       { key: 'textDecoration', label: 'Text Decoration', type: 'select', options: ['none', 'underline', 'overline', 'line-through'] },
       { key: 'bgColor', label: 'Background Color', type: 'color' },
