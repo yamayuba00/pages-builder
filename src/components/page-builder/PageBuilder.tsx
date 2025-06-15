@@ -349,7 +349,7 @@ ${props.code}
 <div style="background-color: ${props.bgColor};" class="w-full ${props.padding} ${props.margin}">
   <div class="border-b border-gray-200">
     <nav class="flex space-x-8">
-      ${tabList.map((tab: string) => `
+      ${tabList.map((tab: string, index: number) => `
         <button onclick="showTab(${index})" id="tab-${index}" class="tab-button py-2 px-1 border-b-2 font-medium text-sm ${index === 0 ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}" style="color: ${index === 0 ? props.activeTabColor : props.textColor}; background-color: ${index === 0 ? props.activeTabBg : 'transparent'};">
           ${tab}
         </button>
