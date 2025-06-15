@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus, Layout, Type, Image, Menu, Grid, CreditCard, MousePointer, BarChart, Table, Sidebar, TrendingUp, FileTemplate } from 'lucide-react';
+import { Plus, Layout, Type, Image, Menu, Grid, CreditCard, MousePointer, BarChart, Table, Sidebar, TrendingUp } from 'lucide-react';
 import { ComponentType } from '@/lib/page-builder-types';
 import { pageComponents } from '@/lib/page-components';
 
@@ -90,7 +89,7 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({ onAddComponent, onS
             {templates.map((template) => (
               <div key={template.id} className="border rounded-lg p-3 hover:shadow-md transition-shadow">
                 <div className="flex items-start gap-2 mb-2">
-                  <FileTemplate className="h-4 w-4 mt-0.5 text-primary" />
+                  <Layout className="h-4 w-4 mt-0.5 text-primary" />
                   <div className="flex-1 min-w-0">
                     <h3 className="font-medium text-sm">{template.name}</h3>
                     <p className="text-xs text-muted-foreground">{template.description}</p>
