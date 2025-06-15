@@ -16,7 +16,7 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({
   onSelectTemplate, 
   onShowAIGenerator 
 }) => {
-  const [activeTab, setActiveTab] = useState<'components' | 'templates' | 'ai'>('components');
+  const [activeTab, setActiveTab] = useState<'components' | 'templates'>('components');
 
   const componentCategories = [
     {
@@ -33,9 +33,10 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({
       ]
     },
     {
-      name: 'Typography',
+      name: 'Content',
       icon: Type,
       components: [
+        { type: 'hero' as ComponentType, name: 'Hero Section', icon: Square },
         { type: 'heading' as ComponentType, name: 'Heading', icon: Heading },
         { type: 'paragraph' as ComponentType, name: 'Paragraph', icon: Type },
         { type: 'text' as ComponentType, name: 'Text Block', icon: Type },
@@ -56,10 +57,9 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({
       ]
     },
     {
-      name: 'Content',
+      name: 'Media & Data',
       icon: Image,
       components: [
-        { type: 'hero' as ComponentType, name: 'Hero Section', icon: Square },
         { type: 'image' as ComponentType, name: 'Image', icon: Image },
         { type: 'card' as ComponentType, name: 'Card', icon: Square },
         { type: 'stats' as ComponentType, name: 'Statistics', icon: BarChart3 },
@@ -76,14 +76,14 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({
   ];
 
   return (
-    <div className="h-full flex flex-col bg-secondary/30">
-      <div className="flex-shrink-0 border-b">
+    <div className="h-full flex flex-col bg-gray-50">
+      <div className="flex-shrink-0 border-b bg-white">
         <div className="flex">
           <Button
             variant={activeTab === 'components' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setActiveTab('components')}
-            className="flex-1 rounded-none text-xs"
+            className="flex-1 rounded-none"
           >
             Components
           </Button>
@@ -91,18 +91,9 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({
             variant={activeTab === 'templates' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setActiveTab('templates')}
-            className="flex-1 rounded-none text-xs"
+            className="flex-1 rounded-none"
           >
             Templates
-          </Button>
-          <Button
-            variant={activeTab === 'ai' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setActiveTab('ai')}
-            className="flex-1 rounded-none text-xs"
-          >
-            <Sparkles className="h-3 w-3 mr-1" />
-            AI
           </Button>
         </div>
       </div>
@@ -115,64 +106,66 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({
                 {componentCategories.map((category) => (
                   <div key={category.name}>
                     <div className="flex items-center gap-2 mb-3">
-                      <category.icon className="h-4 w-4" />
-                      <h3 className="font-medium text-sm">{category.name}</h3>
+                      <category.icon className="h-4 w-4 text-gray-600" />
+                      <h3 className="font-semibold text-sm text-gray-800">{category.name}</h3>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 gap-2">
                       {category.components.map((comp) => (
                         <Button
                           key={comp.type}
                           variant="outline"
                           size="sm"
                           onClick={() => onAddComponent(comp.type)}
-                          className="h-auto p-3 flex flex-col items-center gap-2 text-xs hover:bg-accent"
+                          className="h-auto p-3 flex items-center gap-3 text-left justify-start hover:bg-blue-50 hover:border-blue-200"
                         >
-                          <comp.icon className="h-4 w-4" />
-                          <span className="text-center leading-tight">{comp.name}</span>
+                          <comp.icon className="h-4 w-4 text-gray-500" />
+                          <span className="text-sm font-medium">{comp.name}</span>
                         </Button>
                       ))}
                     </div>
                   </div>
                 ))}
+                
+                {/* AI Coming Soon Section */}
+                <div className="border-t pt-4 mt-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Sparkles className="h-4 w-4 text-purple-400" />
+                    <h3 className="font-semibold text-sm text-gray-800">AI Generator</h3>
+                  </div>
+                  <div className="p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-100">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Sparkles className="h-5 w-5 text-purple-500" />
+                      <span className="font-medium text-sm text-purple-700">Coming Soon</span>
+                    </div>
+                    <p className="text-xs text-gray-600 mb-3">
+                      AI-powered component generation will be available soon. Generate layouts from simple descriptions!
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      disabled 
+                      className="w-full opacity-60"
+                    >
+                      <Sparkles className="h-3 w-3 mr-2" />
+                      Generate with AI
+                    </Button>
+                  </div>
+                </div>
               </div>
-            ) : activeTab === 'templates' ? (
+            ) : (
               <div className="space-y-3">
-                <h3 className="font-medium text-sm mb-4">Ready-to-use Templates</h3>
+                <h3 className="font-semibold text-sm mb-4 text-gray-800">Ready-to-use Templates</h3>
                 {templates.map((template) => (
                   <Button
                     key={template.id}
                     variant="outline"
                     onClick={() => onSelectTemplate(template.id)}
-                    className="w-full h-auto p-4 flex flex-col items-start gap-2 text-left hover:bg-accent"
+                    className="w-full h-auto p-4 flex flex-col items-start gap-2 text-left hover:bg-blue-50 hover:border-blue-200"
                   >
-                    <span className="font-medium text-sm">{template.name}</span>
-                    <span className="text-xs text-muted-foreground">{template.description}</span>
+                    <span className="font-semibold text-sm text-gray-800">{template.name}</span>
+                    <span className="text-xs text-gray-600">{template.description}</span>
                   </Button>
                 ))}
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="text-center">
-                  <Sparkles className="h-12 w-12 mx-auto text-purple-600 mb-3" />
-                  <h3 className="font-medium text-sm mb-2">AI Component Generator</h3>
-                  <p className="text-xs text-muted-foreground mb-4">
-                    Describe what you want to build and let AI generate the components for you
-                  </p>
-                  <Button onClick={onShowAIGenerator} className="w-full">
-                    <Sparkles className="h-4 w-4 mr-2" />
-                    Generate with AI
-                  </Button>
-                </div>
-                
-                <div className="space-y-2 text-xs text-muted-foreground">
-                  <p className="font-medium">Examples you can try:</p>
-                  <ul className="space-y-1 ml-2">
-                    <li>• "Create a modern landing page"</li>
-                    <li>• "Build a contact form section"</li>
-                    <li>• "Make an about us page"</li>
-                    <li>• "Create a pricing table"</li>
-                  </ul>
-                </div>
               </div>
             )}
           </div>

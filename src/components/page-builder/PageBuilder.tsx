@@ -5,13 +5,11 @@ import ComponentPalette from './ComponentPalette';
 import ComponentEditor from './ComponentEditor';
 import BuilderCanvas from './BuilderCanvas';
 import CustomCodeEditor from './CustomCodeEditor';
-import { AIComponentGenerator } from './AIComponentGenerator';
 import { PageComponent, ComponentType } from '@/lib/page-builder-types';
 import { pageComponents } from '@/lib/page-components';
-import { PanelLeftOpen, Download, Code, Eye } from 'lucide-react';
+import { PanelLeftOpen, Download, Code } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const PageBuilder: React.FC = () => {
   const [components, setComponents] = useState<PageComponent[]>([]);
@@ -20,7 +18,6 @@ const PageBuilder: React.FC = () => {
   const [showCustomCode, setShowCustomCode] = useState(false);
   const [customCSS, setCustomCSS] = useState('');
   const [customJS, setCustomJS] = useState('');
-  const [showAIGenerator, setShowAIGenerator] = useState(false);
   const { toast } = useToast();
 
   const handleAddComponent = (type: ComponentType) => {
@@ -43,18 +40,12 @@ const PageBuilder: React.FC = () => {
     });
   };
 
-  const handleAddComponents = (newComponents: PageComponent[]) => {
-    setComponents(prev => [...prev, ...newComponents]);
-    setShowAIGenerator(false);
-    
-    toast({
-      title: "Komponen AI berhasil ditambahkan!",
-      description: `${newComponents.length} komponen telah ditambahkan ke halaman.`,
-    });
-  };
-
   const handleShowAIGenerator = () => {
-    setShowAIGenerator(true);
+    // Placeholder for future AI integration
+    toast({
+      title: "Coming Soon!",
+      description: "AI Generator akan segera tersedia.",
+    });
   };
 
   const handleSelectTemplate = (templateId: string) => {
@@ -679,8 +670,8 @@ ${componentsHTML}
 
   return (
     <div className="h-screen w-screen bg-background text-foreground flex flex-col">
-      <header className="flex h-14 items-center gap-4 border-b bg-secondary/50 px-6 flex-shrink-0">
-        <h1 className="text-lg font-semibold">Page Builder Pro</h1>
+      <header className="flex h-14 items-center gap-4 border-b bg-white px-6 flex-shrink-0 shadow-sm">
+        <h1 className="text-lg font-bold text-gray-800">Page Builder Pro</h1>
         <div className="ml-auto flex gap-2">
           <Button
             variant={showCustomCode ? 'default' : 'outline'}
@@ -754,7 +745,7 @@ ${componentsHTML}
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
-            <div className="h-full overflow-hidden">
+            <div className="h-full overflow-hidden bg-gray-50">
               <ScrollArea className="h-full">
                 <ComponentEditor
                   component={selectedComponent}
@@ -766,18 +757,6 @@ ${componentsHTML}
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
-
-      <Dialog open={showAIGenerator} onOpenChange={setShowAIGenerator}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>AI Component Generator</DialogTitle>
-          </DialogHeader>
-          <AIComponentGenerator
-            existingComponents={components}
-            onAddComponents={handleAddComponents}
-          />
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
