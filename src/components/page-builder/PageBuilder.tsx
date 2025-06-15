@@ -171,19 +171,23 @@ const PageBuilder: React.FC = () => {
     
     switch (component.type) {
       case 'navbar':
+        const navMenuList = props.menuItems.split(',').map((item: string) => item.trim()).filter((item: string) => item);
         return `
-<nav style="background-color: ${props.bgColor};" class="px-4 lg:px-6 h-14 flex items-center shadow-md">
-  <a href="#" class="flex items-center justify-center">
-    <svg class="h-6 w-6" style="color: ${props.linkColor};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12l4-4m-4 4l4 4"/>
-    </svg>
-    <span class="sr-only">Page Builder Inc</span>
-  </a>
-  <div class="ml-auto flex gap-4 sm:gap-6">
-    <a href="#" style="color: ${props.linkColor};" class="text-sm font-medium hover:underline">Fitur</a>
-    <a href="#" style="color: ${props.linkColor};" class="text-sm font-medium hover:underline">Harga</a>
-    <a href="#" style="color: ${props.linkColor};" class="text-sm font-medium hover:underline">Tentang</a>
-    <a href="#" style="color: ${props.linkColor};" class="text-sm font-medium hover:underline">Kontak</a>
+<nav style="background-color: ${props.bgColor}; height: ${props.height};" class="w-full px-4 lg:px-6 flex items-center shadow-md">
+  <div class="${props.maxWidth} mx-auto w-full flex items-center justify-between">
+    <a href="#" class="flex items-center justify-center">
+      <svg class="h-6 w-6 mr-2" style="color: ${props.linkColor};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12l4-4m-4 4l4 4"/>
+      </svg>
+      ${props.logoText ? `<span style="color: ${props.linkColor}; font-size: ${props.fontSize}; font-weight: ${props.fontWeight};">${props.logoText}</span>` : ''}
+    </a>
+    <div class="flex gap-4 sm:gap-6">
+      ${navMenuList.map((item: string) => `
+        <a href="#" style="color: ${props.linkColor}; font-size: ${props.fontSize}; font-weight: ${props.fontWeight};" class="hover:underline underline-offset-4 transition-colors">
+          ${item}
+        </a>
+      `).join('')}
+    </div>
   </div>
 </nav>`;
 
@@ -217,6 +221,159 @@ const PageBuilder: React.FC = () => {
       ${props.content.replace(/\n/g, '<br>')}
     </div>
   </div>
+</div>`;
+
+      case 'container':
+        const shadowClasses = {
+          none: '',
+          sm: 'box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);',
+          md: 'box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);',
+          lg: 'box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);',
+          xl: 'box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);'
+        };
+        return `
+<div class="w-full ${props.margin}">
+  <div class="${props.maxWidth} mx-auto">
+    <div style="background-color: ${props.bgColor}; border-color: ${props.borderColor}; border-width: ${props.borderWidth}; ${shadowClasses[props.shadow as keyof typeof shadowClasses] || shadowClasses.md}" class="${props.padding} ${props.borderRadius} border">
+      <div style="color: ${props.textColor};">
+        ${props.content.replace(/\n/g, '<br>')}
+      </div>
+    </div>
+  </div>
+</div>`;
+
+      case 'heading':
+        return `
+<div style="background-color: ${props.bgColor};" class="w-full ${props.padding} ${props.margin}">
+  <${props.level} style="color: ${props.textColor}; font-size: ${props.fontSize}px; font-weight: ${props.fontWeight}; font-family: ${props.fontFamily}; text-align: ${props.textAlign};">
+    ${props.text}
+  </${props.level}>
+</div>`;
+
+      case 'paragraph':
+        return `
+<div style="background-color: ${props.bgColor};" class="w-full ${props.padding} ${props.margin}">
+  <p style="color: ${props.textColor}; font-size: ${props.fontSize}px; font-weight: ${props.fontWeight}; font-family: ${props.fontFamily}; text-align: ${props.textAlign}; line-height: ${props.lineHeight};">
+    ${props.text.replace(/\n/g, '<br>')}
+  </p>
+</div>`;
+
+      case 'list':
+        const listItems = props.items.split('\n').map((item: string) => item.trim()).filter((item: string) => item);
+        const ListTag = props.type === 'ordered' ? 'ol' : 'ul';
+        return `
+<div style="background-color: ${props.bgColor};" class="w-full ${props.padding} ${props.margin}">
+  <${ListTag} style="color: ${props.textColor}; font-size: ${props.fontSize}px; font-weight: ${props.fontWeight}; font-family: ${props.fontFamily}; list-style-type: ${props.listStyleType};" class="space-y-2 ml-6">
+    ${listItems.map(item => `<li>${item}</li>`).join('')}
+  </${ListTag}>
+</div>`;
+
+      case 'quote':
+        return `
+<div style="background-color: ${props.bgColor}; border-left: 4px solid ${props.borderColor};" class="w-full ${props.padding} ${props.margin}">
+  <blockquote style="color: ${props.textColor}; font-size: ${props.fontSize}px; font-style: ${props.fontStyle}; text-align: ${props.textAlign};" class="pl-4">
+    "${props.quote}"
+    ${props.author ? `<footer style="color: ${props.authorColor};" class="mt-2 text-sm">— ${props.author}</footer>` : ''}
+  </blockquote>
+</div>`;
+
+      case 'code':
+        return `
+<div class="w-full ${props.margin}">
+  <pre style="background-color: ${props.bgColor}; color: ${props.textColor}; font-size: ${props.fontSize}px; font-family: ${props.fontFamily};" class="${props.padding} ${props.borderRadius} overflow-x-auto">
+    <code class="language-${props.language}">
+${props.code}
+    </code>
+  </pre>
+</div>`;
+
+      case 'link':
+        return `
+<div style="background-color: ${props.bgColor};" class="w-full ${props.padding} ${props.margin}">
+  <div style="text-align: ${props.textAlign};">
+    <a href="${props.url}" target="${props.target}" style="color: ${props.textColor}; font-size: ${props.fontSize}px; font-weight: ${props.fontWeight}; text-decoration: ${props.textDecoration};" 
+       onmouseover="this.style.color='${props.hoverColor}'" onmouseout="this.style.color='${props.textColor}'">
+      ${props.text}
+    </a>
+  </div>
+</div>`;
+
+      case 'tabs':
+        const tabList = props.tabs.split(',').map((tab: string) => tab.trim()).filter((tab: string) => tab);
+        return `
+<div style="background-color: ${props.bgColor};" class="w-full ${props.padding} ${props.margin}">
+  <div class="border-b border-gray-200">
+    <nav class="flex space-x-8">
+      ${tabList.map((tab: string, index: number) => `
+        <button onclick="showTab(${index})" id="tab-${index}" class="tab-button py-2 px-1 border-b-2 font-medium text-sm ${index === 0 ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}" style="color: ${index === 0 ? props.activeTabColor : props.textColor}; background-color: ${index === 0 ? props.activeTabBg : 'transparent'};">
+          ${tab}
+        </button>
+      `).join('')}
+    </nav>
+  </div>
+  <div class="mt-4">
+    ${tabList.map((tab: string, index: number) => `
+      <div id="tab-content-${index}" class="tab-content ${index === 0 ? '' : 'hidden'}" style="color: ${props.textColor};">
+        <p>Content for ${tab}</p>
+      </div>
+    `).join('')}
+  </div>
+  <script>
+    function showTab(tabIndex) {
+      // Hide all tab contents
+      const contents = document.querySelectorAll('.tab-content');
+      const buttons = document.querySelectorAll('.tab-button');
+      
+      contents.forEach(content => content.classList.add('hidden'));
+      buttons.forEach(button => {
+        button.style.color = '${props.textColor}';
+        button.style.backgroundColor = 'transparent';
+        button.classList.remove('border-blue-500', 'text-blue-600');
+        button.classList.add('border-transparent', 'text-gray-500');
+      });
+      
+      // Show selected tab content
+      document.getElementById('tab-content-' + tabIndex).classList.remove('hidden');
+      const activeButton = document.getElementById('tab-' + tabIndex);
+      activeButton.style.color = '${props.activeTabColor}';
+      activeButton.style.backgroundColor = '${props.activeTabBg}';
+      activeButton.classList.add('border-blue-500', 'text-blue-600');
+      activeButton.classList.remove('border-transparent', 'text-gray-500');
+    }
+  </script>
+</div>`;
+
+      case 'accordion':
+        const accordionItems = props.items.split('\n').map((item: string) => item.trim()).filter((item: string) => item);
+        return `
+<div style="background-color: ${props.bgColor}; border-color: ${props.borderColor};" class="w-full ${props.padding} ${props.margin} border rounded-lg">
+  ${accordionItems.map((item: string, index: number) => `
+    <div class="border-b border-gray-200 last:border-b-0">
+      <button onclick="toggleAccordion(${index})" class="w-full text-left py-4 px-6 flex justify-between items-center" style="background-color: ${props.headerBgColor}; color: ${props.textColor};">
+        <span>${item}</span>
+        <svg id="icon-${index}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+      </button>
+      <div id="content-${index}" class="hidden px-6 pb-4" style="color: ${props.textColor};">
+        <p>Content for ${item} section. This can be customized with your own content.</p>
+      </div>
+    </div>
+  `).join('')}
+  <script>
+    function toggleAccordion(index) {
+      const content = document.getElementById('content-' + index);
+      const icon = document.getElementById('icon-' + index);
+      
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        icon.classList.add('rotate-180');
+      } else {
+        content.classList.add('hidden');
+        icon.classList.remove('rotate-180');
+      }
+    }
+  </script>
 </div>`;
 
       case 'form':
@@ -316,7 +473,7 @@ const PageBuilder: React.FC = () => {
 </div>`;
 
       case 'card':
-        const shadowClasses = {
+        const cardShadowClasses = {
           none: '',
           sm: 'box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);',
           md: 'box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);',
@@ -326,7 +483,7 @@ const PageBuilder: React.FC = () => {
         return `
 <div class="w-full py-4">
   <div class="container mx-auto px-4">
-    <div style="background-color: ${props.bgColor}; color: ${props.textColor}; border-color: ${props.borderColor}; ${shadowClasses[props.shadow as keyof typeof shadowClasses] || shadowClasses.md}" class="border rounded-lg p-6">
+    <div style="background-color: ${props.bgColor}; color: ${props.textColor}; border-color: ${props.borderColor}; ${cardShadowClasses[props.shadow as keyof typeof cardShadowClasses] || cardShadowClasses.md}" class="border rounded-lg p-6">
       <h3 class="text-lg font-semibold mb-2">${props.title}</h3>
       <p class="text-sm opacity-80">${props.content}</p>
     </div>

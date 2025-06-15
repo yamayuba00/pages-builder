@@ -363,7 +363,7 @@ export const pageComponents: Record<string, ComponentConfig> = {
     ]
   },
 
-  // Existing components with improved customization
+  // Enhanced navbar with full customization
   navbar: {
     type: 'navbar',
     name: 'Navbar',
@@ -372,14 +372,25 @@ export const pageComponents: Record<string, ComponentConfig> = {
     defaultProps: {
       bgColor: '#111827',
       linkColor: '#F9FAFB',
+      maxWidth: 'max-w-7xl',
+      menuItems: 'Home, About, Services, Contact',
+      logoText: 'Your Brand',
+      height: '64px',
+      fontWeight: '500',
+      fontSize: '16px',
     },
     propsConfig: [
       { key: 'bgColor', label: 'Background Color', type: 'color' },
       { key: 'linkColor', label: 'Link Color', type: 'color' },
+      { key: 'maxWidth', label: 'Max Width', type: 'select', options: ['max-w-sm', 'max-w-md', 'max-w-lg', 'max-w-xl', 'max-w-2xl', 'max-w-4xl', 'max-w-5xl', 'max-w-6xl', 'max-w-7xl', 'max-w-full'] },
+      { key: 'menuItems', label: 'Menu Items (comma separated)', type: 'text' },
+      { key: 'logoText', label: 'Logo Text', type: 'text' },
+      { key: 'height', label: 'Height', type: 'select', options: ['48px', '56px', '64px', '72px', '80px'] },
+      { key: 'fontWeight', label: 'Font Weight', type: 'select', options: ['300', '400', '500', '600', '700'] },
+      { key: 'fontSize', label: 'Font Size', type: 'select', options: ['14px', '16px', '18px', '20px'] },
     ],
   },
 
-  // ... keep existing code (hero, text, image, button, card, stats, table, sidebar, form components)
   hero: {
     type: 'hero',
     name: 'Hero Section',
