@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ComponentConfig } from './page-builder-types';
 import { NavbarTemplate } from '@/components/page-builder/templates/Navbar';
@@ -10,6 +11,7 @@ import { ButtonBlockTemplate } from '@/components/page-builder/templates/ButtonB
 import { StatsBlockTemplate } from '@/components/page-builder/templates/StatsBlock';
 import { TableBlockTemplate } from '@/components/page-builder/templates/TableBlock';
 import { SidebarBlockTemplate } from '@/components/page-builder/templates/SidebarBlock';
+import { FormBlockTemplate } from '@/components/page-builder/templates/FormBlock';
 
 export const pageComponents: Record<string, ComponentConfig> = {
   // Layout Components
@@ -50,6 +52,38 @@ export const pageComponents: Record<string, ComponentConfig> = {
       { key: 'textColor', label: 'Warna Teks', type: 'color' },
       { key: 'activeColor', label: 'Warna Aktif', type: 'color' },
       { key: 'width', label: 'Lebar', type: 'select', options: ['200px', '250px', '300px', '350px'] },
+    ],
+  },
+
+  // Form Components
+  form: {
+    type: 'form',
+    name: 'Form',
+    category: 'form',
+    component: FormBlockTemplate,
+    defaultProps: {
+      title: 'Contact Form',
+      fields: 'Name, Email, Subject, Message',
+      submitText: 'Send Message',
+      bgColor: '#ffffff',
+      textColor: '#374151',
+      inputBgColor: '#ffffff',
+      buttonColor: '#3b82f6',
+      buttonTextColor: '#ffffff',
+      maxWidth: 'max-w-md',
+      padding: 'py-8 px-4',
+    },
+    propsConfig: [
+      { key: 'title', label: 'Judul Form', type: 'text' },
+      { key: 'fields', label: 'Fields (pisah dengan koma)', type: 'textarea' },
+      { key: 'submitText', label: 'Teks Tombol Submit', type: 'text' },
+      { key: 'bgColor', label: 'Warna Latar', type: 'color' },
+      { key: 'textColor', label: 'Warna Teks', type: 'color' },
+      { key: 'inputBgColor', label: 'Warna Latar Input', type: 'color' },
+      { key: 'buttonColor', label: 'Warna Tombol', type: 'color' },
+      { key: 'buttonTextColor', label: 'Warna Teks Tombol', type: 'color' },
+      { key: 'maxWidth', label: 'Lebar Maksimal', type: 'select', options: ['max-w-sm', 'max-w-md', 'max-w-lg', 'max-w-xl', 'max-w-2xl'] },
+      { key: 'padding', label: 'Padding', type: 'select', options: ['py-4 px-2', 'py-6 px-4', 'py-8 px-4', 'py-12 px-6'] },
     ],
   },
 
@@ -145,7 +179,7 @@ export const pageComponents: Record<string, ComponentConfig> = {
     ],
   },
 
-  // ... keep existing code (existing components like navbar, hero, text, image)
+  // Enhanced Layout Components
   navbar: {
     type: 'navbar',
     name: 'Navbar',
@@ -160,6 +194,7 @@ export const pageComponents: Record<string, ComponentConfig> = {
       { key: 'linkColor', label: 'Warna Tautan', type: 'color' },
     ],
   },
+  
   hero: {
     type: 'hero',
     name: 'Hero Section',
@@ -184,6 +219,7 @@ export const pageComponents: Record<string, ComponentConfig> = {
       { key: 'buttonTextColor', label: 'Warna Teks Tombol', type: 'color' },
     ],
   },
+  
   text: {
     type: 'text',
     name: 'Text Block',
@@ -191,18 +227,41 @@ export const pageComponents: Record<string, ComponentConfig> = {
     component: TextBlockTemplate,
     defaultProps: {
       content: 'Ini adalah blok teks. Anda bisa mengedit konten ini sesuai kebutuhan.',
-      textAlign: 'left',
       fontSize: '16',
+      fontFamily: 'Inter, system-ui, sans-serif',
+      fontWeight: '400',
+      textAlign: 'left',
       textColor: '#000000',
       bgColor: '#ffffff',
+      maxWidth: 'max-w-4xl',
+      padding: 'py-8 px-4',
     },
     propsConfig: [
       { key: 'content', label: 'Konten', type: 'textarea' },
-      { key: 'fontSize', label: 'Ukuran Font (px)', type: 'text' },
+      { key: 'fontSize', label: 'Ukuran Font (px)', type: 'number' },
+      { key: 'fontFamily', label: 'Font Family', type: 'select', options: [
+        'Inter, system-ui, sans-serif',
+        'Arial, sans-serif',
+        'Georgia, serif',
+        'Times New Roman, serif',
+        'Helvetica, sans-serif',
+        'Verdana, sans-serif',
+        'Courier New, monospace',
+        'Roboto, sans-serif',
+        'Open Sans, sans-serif',
+        'Lato, sans-serif',
+        'Montserrat, sans-serif',
+        'Playfair Display, serif'
+      ]},
+      { key: 'fontWeight', label: 'Font Weight', type: 'select', options: ['100', '200', '300', '400', '500', '600', '700', '800', '900'] },
+      { key: 'textAlign', label: 'Text Align', type: 'select', options: ['left', 'center', 'right', 'justify'] },
       { key: 'textColor', label: 'Warna Teks', type: 'color' },
       { key: 'bgColor', label: 'Warna Latar', type: 'color' },
+      { key: 'maxWidth', label: 'Lebar Maksimal', type: 'select', options: ['max-w-sm', 'max-w-md', 'max-w-lg', 'max-w-xl', 'max-w-2xl', 'max-w-4xl', 'max-w-6xl', 'max-w-full'] },
+      { key: 'padding', label: 'Padding', type: 'select', options: ['py-4 px-2', 'py-6 px-4', 'py-8 px-4', 'py-12 px-6'] },
     ],
   },
+  
   image: {
     type: 'image',
     name: 'Image Block',

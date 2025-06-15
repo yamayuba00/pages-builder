@@ -68,6 +68,21 @@ const PageBuilder: React.FC = () => {
     });
   };
 
+  const handleDragComponent = (dragIndex: number, hoverIndex: number) => {
+    setComponents(prev => {
+      const newComponents = [...prev];
+      const draggedComponent = newComponents[dragIndex];
+      
+      // Remove dragged component
+      newComponents.splice(dragIndex, 1);
+      // Insert at new position
+      newComponents.splice(hoverIndex, 0, draggedComponent);
+      
+      // Update order
+      return newComponents.map((c, index) => ({ ...c, order: index }));
+    });
+  };
+
   const handlePropChange = (componentId: string, key: string, value: any) => {
     setComponents(prev => 
       prev.map(comp => 
@@ -128,12 +143,77 @@ const PageBuilder: React.FC = () => {
 
       case 'text':
         return `
-<div style="background-color: ${props.bgColor}; color: ${props.textColor}; font-size: ${props.fontSize}px;" class="w-full py-8 px-4">
-  <div class="container mx-auto">
-    <div class="prose max-w-none" style="color: ${props.textColor};">
+<div style="background-color: ${props.bgColor}; color: ${props.textColor};" class="w-full ${props.padding}">
+  <div class="${props.maxWidth} mx-auto">
+    <div class="prose max-w-none" style="color: ${props.textColor}; font-size: ${props.fontSize}px; font-family: ${props.fontFamily}; font-weight: ${props.fontWeight}; text-align: ${props.textAlign};">
       ${props.content.replace(/\n/g, '<br>')}
     </div>
   </div>
+</div>`;
+
+      case 'form':
+        const fieldList = props.fields.split(',').map((field: string) => field.trim()).filter((field: string) => field);
+        return `
+<div style="background-color: ${props.bgColor}; color: ${props.textColor};" class="w-full ${props.padding}">
+  <div class="${props.maxWidth} mx-auto">
+    <form class="space-y-4">
+      <h2 class="text-2xl font-bold mb-6">${props.title}</h2>
+      ${fieldList.map((field: string) => `
+        <div class="space-y-2">
+          <label class="block text-sm font-medium">${field}</label>
+          <input type="${field.toLowerCase().includes('email') ? 'email' : field.toLowerCase().includes('password') ? 'password' : 'text'}" 
+                 style="background-color: ${props.inputBgColor}; color: ${props.textColor};" 
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                 placeholder="Enter your ${field.toLowerCase()}">
+        </div>
+      `).join('')}
+      <button type="submit" style="background-color: ${props.buttonColor}; color: ${props.buttonTextColor};" 
+              class="w-full py-2 px-4 rounded-md font-medium hover:opacity-90 transition-opacity">
+        ${props.submitText}
+      </button>
+    </form>
+  </div>
+</div>`;
+
+      case 'sidebar':
+        return `
+<div style="background-color: ${props.bgColor}; width: ${props.width};" class="h-screen p-4 shadow-lg float-left">
+  <div class="mb-8">
+    <h2 style="color: ${props.textColor};" class="text-xl font-bold">Dashboard</h2>
+  </div>
+  <nav class="space-y-2">
+    <a href="#" style="color: ${props.activeColor}; background-color: ${props.activeColor}20;" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="m3 9 9-7 9 7v11a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2z"/>
+        <polyline points="9,22 9,12 15,12 15,22"/>
+      </svg>
+      Dashboard
+    </a>
+    <a href="#" style="color: ${props.textColor};" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:opacity-80 transition-all">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="m22 21-3-3m2.5 0a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0z"/>
+      </svg>
+      Users
+    </a>
+    <a href="#" style="color: ${props.textColor};" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:opacity-80 transition-all">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+        <line x1="16" x2="16" y1="2" y2="6"/>
+        <line x1="8" x2="8" y1="2" y2="6"/>
+        <line x1="3" x2="21" y1="10" y2="10"/>
+      </svg>
+      Analytics
+    </a>
+    <a href="#" style="color: ${props.textColor};" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:opacity-80 transition-all">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l-.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+      Settings
+    </a>
+  </nav>
 </div>`;
 
       case 'image':
@@ -241,6 +321,9 @@ const PageBuilder: React.FC = () => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landing Page - Generated by Page Builder</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Roboto:wght@100;300;400;500;700;900&family=Open+Sans:wght@300;400;500;600;700;800&family=Lato:wght@100;300;400;700;900&family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         .container {
             max-width: 1200px;
@@ -267,6 +350,10 @@ const PageBuilder: React.FC = () => {
             transition: all 0.2s ease-in-out;
         }
         
+        .transition-opacity {
+            transition: opacity 0.2s ease-in-out;
+        }
+        
         .shadow-md {
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
@@ -291,6 +378,16 @@ const PageBuilder: React.FC = () => {
             border-radius: 0.375rem;
         }
         
+        .float-left {
+            float: left;
+        }
+        
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding-left: 1rem;
@@ -301,10 +398,16 @@ const PageBuilder: React.FC = () => {
             .text-lg { font-size: 1.125rem; }
             .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
             .px-4 { padding-left: 1rem; padding-right: 1rem; }
+            
+            .float-left {
+                float: none;
+                width: 100% !important;
+                height: auto !important;
+            }
         }
     </style>
 </head>
-<body style="margin: 0; padding: 0; font-family: Inter, system-ui, -apple-system, sans-serif;">
+<body style="margin: 0; padding: 0; font-family: Inter, system-ui, -apple-system, sans-serif;" class="clearfix">
     <!-- Generated by Page Builder Pro -->
 ${componentsHTML}
     
@@ -323,6 +426,14 @@ ${componentsHTML}
         // Add hover effects
         document.querySelectorAll('a, button').forEach(element => {
             element.style.cursor = 'pointer';
+        });
+        
+        // Form submission handling
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Form submitted! (This is a demo - integrate with your backend)');
+            });
         });
     </script>
 </body>
@@ -386,6 +497,7 @@ ${componentsHTML}
                 onSelectComponent={handleSelectComponent}
                 onDeleteComponent={handleDeleteComponent}
                 onMoveComponent={handleMoveComponent}
+                onDragComponent={handleDragComponent}
               />
             </div>
           </ResizablePanel>
