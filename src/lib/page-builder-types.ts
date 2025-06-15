@@ -4,7 +4,6 @@ export type ComponentType =
   | 'hero' 
   | 'text' 
   | 'image'
-  | 'grid'
   | 'card'
   | 'button'
   | 'table'
@@ -19,7 +18,18 @@ export type ComponentType =
   | 'testimonial'
   | 'pricing'
   | 'faq'
-  | 'contact';
+  | 'contact'
+  | 'container'
+  | 'row'
+  | 'column'
+  | 'spacer'
+  | 'heading'
+  | 'paragraph'
+  | 'quote'
+  | 'code'
+  | 'link'
+  | 'tabs'
+  | 'accordion';
 
 export interface PageComponent {
   id: string;

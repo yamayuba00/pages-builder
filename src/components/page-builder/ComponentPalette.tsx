@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Layout, Type, Image, Square, BarChart3, Table, Sidebar, Layers, Trash2, FileText, CreditCard, MessageSquare, Star, DollarSign, HelpCircle, Mail, Minus } from 'lucide-react';
+import { Layout, Type, Image, Square, BarChart3, Table, Sidebar, Layers, FileText, CreditCard, MessageSquare, Star, DollarSign, HelpCircle, Mail, Minus, Container, Columns, Hash, Heading, Quote, Code, Link2, Tabs, ChevronDown } from 'lucide-react';
 import { ComponentType } from '@/lib/page-builder-types';
 
 interface ComponentPaletteProps {
@@ -19,19 +19,24 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({ onAddComponent, onS
       icon: Layout,
       components: [
         { type: 'navbar' as ComponentType, name: 'Navigation', icon: Layout },
-        { type: 'hero' as ComponentType, name: 'Hero Section', icon: Square },
+        { type: 'container' as ComponentType, name: 'Container', icon: Container },
+        { type: 'row' as ComponentType, name: 'Row', icon: Minus },
+        { type: 'column' as ComponentType, name: 'Column', icon: Columns },
+        { type: 'spacer' as ComponentType, name: 'Spacer', icon: Minus },
         { type: 'sidebar' as ComponentType, name: 'Sidebar', icon: Sidebar },
-        { type: 'footer' as ComponentType, name: 'Footer', icon: Minus },
       ]
     },
     {
-      name: 'Content',
+      name: 'Typography',
       icon: Type,
       components: [
+        { type: 'heading' as ComponentType, name: 'Heading', icon: Heading },
+        { type: 'paragraph' as ComponentType, name: 'Paragraph', icon: Type },
         { type: 'text' as ComponentType, name: 'Text Block', icon: Type },
-        { type: 'image' as ComponentType, name: 'Image', icon: Image },
-        { type: 'card' as ComponentType, name: 'Card', icon: Square },
-        { type: 'testimonial' as ComponentType, name: 'Testimonial', icon: MessageSquare },
+        { type: 'list' as ComponentType, name: 'List', icon: Hash },
+        { type: 'quote' as ComponentType, name: 'Quote', icon: Quote },
+        { type: 'code' as ComponentType, name: 'Code Block', icon: Code },
+        { type: 'link' as ComponentType, name: 'Link', icon: Link2 },
       ]
     },
     {
@@ -40,24 +45,19 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({ onAddComponent, onS
       components: [
         { type: 'button' as ComponentType, name: 'Button', icon: Square },
         { type: 'form' as ComponentType, name: 'Form', icon: FileText },
-        { type: 'contact' as ComponentType, name: 'Contact Form', icon: Mail },
+        { type: 'tabs' as ComponentType, name: 'Tabs', icon: Tabs },
+        { type: 'accordion' as ComponentType, name: 'Accordion', icon: ChevronDown },
       ]
     },
     {
-      name: 'Data',
-      icon: BarChart3,
+      name: 'Content',
+      icon: Image,
       components: [
+        { type: 'hero' as ComponentType, name: 'Hero Section', icon: Square },
+        { type: 'image' as ComponentType, name: 'Image', icon: Image },
+        { type: 'card' as ComponentType, name: 'Card', icon: Square },
         { type: 'stats' as ComponentType, name: 'Statistics', icon: BarChart3 },
         { type: 'table' as ComponentType, name: 'Table', icon: Table },
-        { type: 'pricing' as ComponentType, name: 'Pricing Card', icon: CreditCard },
-      ]
-    },
-    {
-      name: 'Custom',
-      icon: Layers,
-      components: [
-        { type: 'divider' as ComponentType, name: 'Divider', icon: Minus },
-        { type: 'faq' as ComponentType, name: 'FAQ Section', icon: HelpCircle },
       ]
     }
   ];
