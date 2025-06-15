@@ -21,24 +21,24 @@ const BuilderCanvas: React.FC<BuilderCanvasProps> = ({
   onEditComponent
 }) => {
   return (
-    <div className="h-full overflow-auto bg-gray-50">
-      <div className="min-h-full">
-        {/* Visual Grid Reference */}
-        <div className="sticky top-0 bg-white border-b shadow-sm z-10">
-          <div className="grid grid-cols-12 gap-1 p-2">
-            {Array.from({ length: 12 }, (_, i) => (
-              <div
-                key={i}
-                className="h-6 bg-blue-100 border border-blue-200 rounded flex items-center justify-center text-xs font-medium text-blue-600"
-              >
-                {i + 1}
-              </div>
-            ))}
-          </div>
+    <div className="h-full flex flex-col bg-gray-50">
+      {/* Visual Grid Reference - Fixed Header */}
+      <div className="bg-white border-b shadow-sm z-10 flex-shrink-0">
+        <div className="grid grid-cols-12 gap-1 p-2">
+          {Array.from({ length: 12 }, (_, i) => (
+            <div
+              key={i}
+              className="h-6 bg-blue-100 border border-blue-200 rounded flex items-center justify-center text-xs font-medium text-blue-600"
+            >
+              {i + 1}
+            </div>
+          ))}
         </div>
+      </div>
 
-        {/* Components Container */}
-        <div className="bg-white min-h-[calc(100vh-200px)]">
+      {/* Scrollable Components Container */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="bg-white min-h-full">
           <div className="grid grid-cols-12 gap-4 p-4 relative">
             {components
               .sort((a, b) => a.order - b.order)
@@ -60,7 +60,7 @@ const BuilderCanvas: React.FC<BuilderCanvasProps> = ({
                 <div className="text-center text-gray-500">
                   <p className="text-lg font-medium mb-2">Mulai membangun halaman Anda</p>
                   <p className="text-sm">Pilih komponen dari panel kiri untuk memulai</p>
-                  <p className="text-xs mt-2 text-gray-400">Setiap komponen dapat dikombinasikan dan diatur ulang dengan mudah</p>
+                  <p className="text-xs mt-2 text-gray-400">Atau gunakan template siap pakai untuk memulai lebih cepat</p>
                 </div>
               </div>
             )}

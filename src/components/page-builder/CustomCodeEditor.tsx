@@ -22,6 +22,17 @@ const CustomCodeEditor: React.FC<CustomCodeEditorProps> = ({
   const [js, setJS] = useState(customJS);
   const { toast } = useToast();
 
+  const cssPlaceholder = `/* Custom CSS */
+.my-custom-class {
+  color: #ff0000;
+  font-weight: bold;
+}`;
+
+  const jsPlaceholder = `// Custom JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Page loaded!');
+});`;
+
   const handleSave = () => {
     onSave(css, js);
     toast({
@@ -30,73 +41,47 @@ const CustomCodeEditor: React.FC<CustomCodeEditorProps> = ({
     });
   };
 
-  const cssPlaceholder = `/* Tambahkan CSS custom di sini */
-.my-custom-class {
-  color: #ff0000;
-  font-weight: bold;
-}`;
-
-  const jsPlaceholder = `// Tambahkan JavaScript custom di sini
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('Page loaded!');
-  
-  // Contoh: Smooth scroll untuk semua link
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth' });
-      }
-    });
-  });
-});`;
-
   return (
-    <div className="p-4 border-t">
-      <div className="flex items-center gap-2 mb-4">
+    <div className="p-4 border-t bg-background">
+      <div className="flex items-center gap-2 mb-3">
         <Code className="h-4 w-4" />
-        <h3 className="font-semibold">Custom Code</h3>
+        <h3 className="font-semibold text-sm">Custom Code</h3>
       </div>
       
       <Tabs defaultValue="css" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="css">CSS</TabsTrigger>
-          <TabsTrigger value="js">JavaScript</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 mb-2">
+          <TabsTrigger value="css" className="text-xs">CSS</TabsTrigger>
+          <TabsTrigger value="js" className="text-xs">JavaScript</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="css" className="space-y-4">
-          <div>
-            <Label htmlFor="custom-css">Custom CSS</Label>
-            <Textarea
-              id="custom-css"
-              placeholder={cssPlaceholder}
-              value={css}
-              onChange={(e) => setCSS(e.target.value)}
-              rows={10}
-              className="font-mono text-sm"
-            />
-          </div>
+        <TabsContent value="css" className="space-y-2">
+          <Label htmlFor="custom-css" className="text-xs">Custom CSS</Label>
+          <Textarea
+            id="custom-css"
+            placeholder={cssPlaceholder}
+            value={css}
+            onChange={(e) => setCSS(e.target.value)}
+            rows={6}
+            className="font-mono text-xs resize-none"
+          />
         </TabsContent>
         
-        <TabsContent value="js" className="space-y-4">
-          <div>
-            <Label htmlFor="custom-js">Custom JavaScript</Label>
-            <Textarea
-              id="custom-js"
-              placeholder={jsPlaceholder}
-              value={js}
-              onChange={(e) => setJS(e.target.value)}
-              rows={10}
-              className="font-mono text-sm"
-            />
-          </div>
+        <TabsContent value="js" className="space-y-2">
+          <Label htmlFor="custom-js" className="text-xs">Custom JavaScript</Label>
+          <Textarea
+            id="custom-js"
+            placeholder={jsPlaceholder}
+            value={js}
+            onChange={(e) => setJS(e.target.value)}
+            rows={6}
+            className="font-mono text-xs resize-none"
+          />
         </TabsContent>
       </Tabs>
       
-      <Button onClick={handleSave} className="mt-4 w-full">
-        <Save className="h-4 w-4 mr-2" />
-        Simpan Custom Code
+      <Button onClick={handleSave} size="sm" className="mt-2 w-full">
+        <Save className="h-3 w-3 mr-1" />
+        Simpan
       </Button>
     </div>
   );

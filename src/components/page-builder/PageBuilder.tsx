@@ -42,6 +42,62 @@ const PageBuilder: React.FC = () => {
     });
   };
 
+  const handleSelectTemplate = (templateId: string) => {
+    let templateComponents: Partial<PageComponent>[] = [];
+
+    switch (templateId) {
+      case 'landing-page':
+        templateComponents = [
+          { type: 'navbar', gridStart: 0, gridEnd: 11 },
+          { type: 'hero', gridStart: 0, gridEnd: 11 },
+          { type: 'text', gridStart: 0, gridEnd: 7, props: { ...pageComponents.text.defaultProps, content: 'Tentang Kami\n\nKami adalah perusahaan yang berkomitmen memberikan solusi terbaik untuk kebutuhan digital Anda.' } },
+          { type: 'card', gridStart: 8, gridEnd: 11, props: { ...pageComponents.card.defaultProps, title: 'Kontak Info', content: 'Email: info@company.com\nTelp: +62 123 456 789' } },
+        ];
+        break;
+      case 'dashboard':
+        templateComponents = [
+          { type: 'sidebar', gridStart: 0, gridEnd: 2 },
+          { type: 'stats', gridStart: 3, gridEnd: 5, props: { ...pageComponents.stats.defaultProps, title: 'Total Users', value: '1,234' } },
+          { type: 'stats', gridStart: 6, gridEnd: 8, props: { ...pageComponents.stats.defaultProps, title: 'Revenue', value: '$45,678' } },
+          { type: 'stats', gridStart: 9, gridEnd: 11, props: { ...pageComponents.stats.defaultProps, title: 'Orders', value: '567' } },
+          { type: 'table', gridStart: 3, gridEnd: 11 },
+        ];
+        break;
+      case 'portfolio':
+        templateComponents = [
+          { type: 'navbar', gridStart: 0, gridEnd: 11 },
+          { type: 'hero', gridStart: 0, gridEnd: 11, props: { ...pageComponents.hero.defaultProps, title: 'Portfolio Saya', subtitle: 'Kumpulan karya dan proyek terbaik' } },
+          { type: 'grid', gridStart: 0, gridEnd: 11, props: { ...pageComponents.grid.defaultProps, columns: '3' } },
+          { type: 'form', gridStart: 0, gridEnd: 11, props: { ...pageComponents.form.defaultProps, title: 'Hubungi Saya' } },
+        ];
+        break;
+      case 'blog':
+        templateComponents = [
+          { type: 'navbar', gridStart: 0, gridEnd: 11 },
+          { type: 'text', gridStart: 0, gridEnd: 7, props: { ...pageComponents.text.defaultProps, content: 'Artikel Blog\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' } },
+          { type: 'card', gridStart: 8, gridEnd: 11, props: { ...pageComponents.card.defaultProps, title: 'Artikel Terbaru', content: '• Tips & Tricks\n• Tutorial\n• News Update' } },
+        ];
+        break;
+      default:
+        return;
+    }
+
+    const newComponents = templateComponents.map((comp, index) => ({
+      id: `${comp.type}-${Date.now()}-${index}`,
+      type: comp.type!,
+      props: comp.props || { ...pageComponents[comp.type!].defaultProps },
+      order: index,
+      gridStart: comp.gridStart || 0,
+      gridEnd: comp.gridEnd || 11,
+    }));
+
+    setComponents(newComponents);
+    toast({
+      title: "Template berhasil dimuat!",
+      description: `Template ${templateId} telah diterapkan ke halaman.`,
+    });
+  };
+
   const handleSelectComponent = (id: string) => {
     setSelectedComponentId(id);
   };
@@ -392,7 +448,7 @@ ${componentsHTML}
 
   return (
     <div className="h-screen w-screen bg-background text-foreground flex flex-col">
-      <header className="flex h-14 items-center gap-4 border-b bg-secondary/50 px-6">
+      <header className="flex h-14 items-center gap-4 border-b bg-secondary/50 px-6 flex-shrink-0">
         <h1 className="text-lg font-semibold">Page Builder Pro</h1>
         <div className="ml-auto flex gap-2">
           <Button
@@ -409,7 +465,7 @@ ${componentsHTML}
           </Button>
         </div>
       </header>
-      <div className="flex-grow">
+      <div className="flex-1 overflow-hidden">
         <ResizablePanelGroup direction="horizontal" className="h-full w-full">
           <ResizablePanel 
             defaultSize={20} 
@@ -422,11 +478,14 @@ ${componentsHTML}
             className={`transition-all duration-300 ${isLeftPanelCollapsed ? 'hidden' : 'block'}`}
           >
             <div className="h-full flex flex-col">
-              <ScrollArea className="flex-1">
-                <ComponentPalette onAddComponent={handleAddComponent} />
-              </ScrollArea>
+              <div className="flex-1 overflow-hidden">
+                <ComponentPalette 
+                  onAddComponent={handleAddComponent} 
+                  onSelectTemplate={handleSelectTemplate}
+                />
+              </div>
               {showCustomCode && (
-                <div className="border-t">
+                <div className="border-t flex-shrink-0">
                   <CustomCodeEditor
                     customCSS={customCSS}
                     customJS={customJS}
@@ -462,12 +521,14 @@ ${componentsHTML}
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
-            <ScrollArea className="h-full">
-              <ComponentEditor
-                component={selectedComponent}
-                onPropChange={handlePropChange}
-              />
-            </ScrollArea>
+            <div className="h-full overflow-hidden">
+              <ScrollArea className="h-full">
+                <ComponentEditor
+                  component={selectedComponent}
+                  onPropChange={handlePropChange}
+                />
+              </ScrollArea>
+            </div>
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
