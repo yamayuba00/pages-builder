@@ -7,7 +7,7 @@ import GridLayout from './GridLayout';
 import GridContainer from './GridContainer';
 import { PageComponent, ComponentType } from '@/lib/page-builder-types';
 import { pageComponents } from '@/lib/page-components';
-import { PanelLeftClose, PanelLeftOpen, Download, Grid as GridIcon } from 'lucide-react';
+import { PanelLeftClose, PanelLeftOpen, Download, Grid as GridIcon, MoveUp, MoveDown, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 
