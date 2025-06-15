@@ -9,7 +9,10 @@ interface NavbarProps {
 
 export const NavbarTemplate: React.FC<NavbarProps> = ({ bgColor, linkColor }) => {
   return (
-    <nav style={{ backgroundColor: bgColor }} className="px-4 lg:px-6 h-14 flex items-center shadow-md transition-colors">
+    <nav 
+      style={{ backgroundColor: bgColor }} 
+      className="w-full px-4 lg:px-6 h-14 flex items-center shadow-md transition-colors m-0"
+    >
       <a href="#" className="flex items-center justify-center">
         <MountainIcon className="h-6 w-6" style={{ color: linkColor }} />
         <span className="sr-only">Page Builder Inc</span>

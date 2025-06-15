@@ -109,6 +109,35 @@ const PageBuilder: React.FC = () => {
     });
   };
 
+  const handleMoveComponent = (id: string, direction: 'up' | 'down') => {
+    setComponents(prev => {
+      const currentIndex = prev.findIndex(comp => comp.id === id);
+      if (currentIndex === -1) return prev;
+
+      const newComponents = [...prev];
+      
+      if (direction === 'up' && currentIndex > 0) {
+        // Swap with previous component
+        [newComponents[currentIndex], newComponents[currentIndex - 1]] = 
+        [newComponents[currentIndex - 1], newComponents[currentIndex]];
+        
+        // Update orders
+        newComponents[currentIndex - 1].order = currentIndex - 1;
+        newComponents[currentIndex].order = currentIndex;
+      } else if (direction === 'down' && currentIndex < newComponents.length - 1) {
+        // Swap with next component
+        [newComponents[currentIndex], newComponents[currentIndex + 1]] = 
+        [newComponents[currentIndex + 1], newComponents[currentIndex]];
+        
+        // Update orders
+        newComponents[currentIndex].order = currentIndex;
+        newComponents[currentIndex + 1].order = currentIndex + 1;
+      }
+
+      return newComponents;
+    });
+  };
+
   const handleResizeComponent = (id: string, gridStart: number, gridEnd: number) => {
     // Grid system removed, this function can be simplified or removed
   };
@@ -353,16 +382,7 @@ const PageBuilder: React.FC = () => {
     const sortedComponents = components.sort((a, b) => a.order - b.order);
     
     const componentsHTML = sortedComponents.map(comp => {
-      const ComponentToRender = pageComponents[comp.type]?.component;
-      if (!ComponentToRender) return '';
-      
-      // Simple HTML generation without grid system
-      return `<div class="component-wrapper">
-        <!-- ${pageComponents[comp.type]?.name || comp.type} -->
-        <div class="component-content">
-          <!-- Component content would be rendered here -->
-        </div>
-      </div>`;
+      return generateComponentHTML(comp);
     }).join('\n');
 
     const html = `<!DOCTYPE html>
@@ -379,17 +399,12 @@ const PageBuilder: React.FC = () => {
             padding: 0 1rem;
         }
         
-        .component-wrapper {
-            width: 100%;
-            margin-bottom: 1rem;
-        }
-        
         /* Custom CSS */
         ${customCSS}
     </style>
 </head>
-<body>
-    <div class="page-container">
+<body class="m-0 p-0">
+    <div class="page-container m-0 p-0">
 ${componentsHTML}
     </div>
     
@@ -505,6 +520,7 @@ ${componentsHTML}
                 onDeleteComponent={handleDeleteComponent}
                 onResizeComponent={handleResizeComponent}
                 onEditComponent={handleEditComponent}
+                onMoveComponent={handleMoveComponent}
               />
             </div>
           </ResizablePanel>
