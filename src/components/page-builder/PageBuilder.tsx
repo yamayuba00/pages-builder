@@ -164,12 +164,57 @@ const PageBuilder: React.FC = () => {
   const selectedComponent = components.find(c => c.id === selectedComponentId) || null;
 
   const generateComponentHTML = (component: PageComponent): string => {
-    const config = pageComponents[component.type];
-    if (!config) return '';
+    const { type, props } = component;
 
-    const props = component.props;
-    
-    switch (component.type) {
+    switch (type) {
+      case 'column':
+        const parseItems = (itemsString: string) => {
+          const lines = itemsString.split('\n').filter(line => line.trim());
+          const parsedItems = [];
+          
+          for (let i = 0; i < lines.length; i += 3) {
+            const item = {
+              icon: lines[i]?.trim() || 'Circle',
+              text: lines[i + 1]?.trim() || 'Default Text',
+              description: lines[i + 2]?.trim() || 'Default description'
+            };
+            parsedItems.push(item);
+          }
+          
+          return parsedItems;
+        };
+
+        const parsedItems = parseItems(props.items || '');
+        const numberOfItems = Math.min(parseInt(props.itemCount) || 1, 12);
+        const itemsToShow = parsedItems.slice(0, numberOfItems);
+
+        // Fill remaining slots if needed
+        while (itemsToShow.length < numberOfItems) {
+          itemsToShow.push({
+            icon: 'Circle',
+            text: `Item ${itemsToShow.length + 1}`,
+            description: `Description for item ${itemsToShow.length + 1}`
+          });
+        }
+
+        return `
+          <div style="background-color: ${props.bgColor}; color: ${props.textColor}; text-align: ${props.textAlign};" class="${props.width} ${props.padding} min-h-16">
+            <div class="prose max-w-none" style="color: ${props.textColor};">
+              ${props.content ? `<div class="mb-4">${props.content}</div>` : ''}
+              
+              <div class="space-y-${props.itemSpacing}">
+                ${itemsToShow.map((item, index) => `
+                  <div class="flex flex-col ${props.itemAlignment} p-3 rounded-lg" style="background-color: ${props.bgColor}10;">
+                    ${item.icon ? `<svg class="mb-2" width="${props.iconSize}" height="${props.iconSize}" fill="none" stroke="${props.iconColor}" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>` : ''}
+                    ${item.text ? `<h4 class="font-semibold mb-1" style="color: ${props.textColor}; font-size: ${props.textSize}px;">${item.text}</h4>` : ''}
+                    ${item.description ? `<p class="opacity-80" style="color: ${props.textColor}; font-size: ${props.descriptionSize}px;">${item.description}</p>` : ''}
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+
       case 'navbar':
         const navMenuList = props.menuItems.split(',').map((item: string) => item.trim()).filter((item: string) => item);
         return `
@@ -304,7 +349,7 @@ ${props.code}
 <div style="background-color: ${props.bgColor};" class="w-full ${props.padding} ${props.margin}">
   <div class="border-b border-gray-200">
     <nav class="flex space-x-8">
-      ${tabList.map((tab: string, index: number) => `
+      ${tabList.map((tab: string) => `
         <button onclick="showTab(${index})" id="tab-${index}" class="tab-button py-2 px-1 border-b-2 font-medium text-sm ${index === 0 ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}" style="color: ${index === 0 ? props.activeTabColor : props.textColor}; background-color: ${index === 0 ? props.activeTabBg : 'transparent'};">
           ${tab}
         </button>

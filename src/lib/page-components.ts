@@ -88,15 +88,31 @@ export const pageComponents: Record<string, ComponentConfig> = {
       padding: 'p-4',
       textAlign: 'left',
       content: 'Column content goes here',
-      textColor: '#374151'
+      textColor: '#374151',
+      itemCount: '3',
+      items: 'Star\nFeature Title\nFeature description goes here\n\nHeart\nAnother Feature\nAnother feature description\n\nSettings\nCustomization\nFully customizable options',
+      iconSize: '24',
+      iconColor: '#3b82f6',
+      textSize: '16',
+      descriptionSize: '14',
+      itemSpacing: '4',
+      itemAlignment: 'items-center'
     },
     propsConfig: [
       { key: 'width', label: 'Width', type: 'select', options: ['w-1/12', 'w-2/12', 'w-3/12', 'w-4/12', 'w-6/12', 'w-8/12', 'w-9/12', 'w-full'] },
       { key: 'bgColor', label: 'Background Color', type: 'color' },
       { key: 'padding', label: 'Padding', type: 'select', options: ['p-0', 'p-2', 'p-4', 'p-6', 'p-8'] },
       { key: 'textAlign', label: 'Text Align', type: 'select', options: ['left', 'center', 'right', 'justify'] },
-      { key: 'content', label: 'Content', type: 'textarea' },
-      { key: 'textColor', label: 'Text Color', type: 'color' }
+      { key: 'content', label: 'Header Content', type: 'textarea' },
+      { key: 'textColor', label: 'Text Color', type: 'color' },
+      { key: 'itemCount', label: 'Number of Items (1-12)', type: 'select', options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'] },
+      { key: 'items', label: 'Items (Icon name, Text, Description - 3 lines per item)', type: 'textarea' },
+      { key: 'iconSize', label: 'Icon Size', type: 'select', options: ['16', '20', '24', '28', '32', '40', '48'] },
+      { key: 'iconColor', label: 'Icon Color', type: 'color' },
+      { key: 'textSize', label: 'Text Size', type: 'select', options: ['12', '14', '16', '18', '20', '24'] },
+      { key: 'descriptionSize', label: 'Description Size', type: 'select', options: ['10', '12', '14', '16', '18'] },
+      { key: 'itemSpacing', label: 'Item Spacing', type: 'select', options: ['2', '4', '6', '8'] },
+      { key: 'itemAlignment', label: 'Item Alignment', type: 'select', options: ['items-start', 'items-center', 'items-end'] }
     ]
   },
 
