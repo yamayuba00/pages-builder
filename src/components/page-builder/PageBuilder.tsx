@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import ComponentPalette from './ComponentPalette';
@@ -81,20 +80,251 @@ const PageBuilder: React.FC = () => {
 
   const selectedComponent = components.find(c => c.id === selectedComponentId) || null;
 
+  const generateComponentHTML = (component: PageComponent): string => {
+    const config = pageComponents[component.type];
+    if (!config) return '';
+
+    const props = component.props;
+    
+    switch (component.type) {
+      case 'navbar':
+        return `
+<nav style="background-color: ${props.bgColor};" class="px-4 lg:px-6 h-14 flex items-center shadow-md">
+  <a href="#" class="flex items-center justify-center">
+    <svg class="h-6 w-6" style="color: ${props.linkColor};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12l4-4m-4 4l4 4"/>
+    </svg>
+    <span class="sr-only">Page Builder Inc</span>
+  </a>
+  <div class="ml-auto flex gap-4 sm:gap-6">
+    <a href="#" style="color: ${props.linkColor};" class="text-sm font-medium hover:underline">Fitur</a>
+    <a href="#" style="color: ${props.linkColor};" class="text-sm font-medium hover:underline">Harga</a>
+    <a href="#" style="color: ${props.linkColor};" class="text-sm font-medium hover:underline">Tentang</a>
+    <a href="#" style="color: ${props.linkColor};" class="text-sm font-medium hover:underline">Kontak</a>
+  </div>
+</nav>`;
+
+      case 'hero':
+        return `
+<section style="background-color: ${props.bgColor};" class="w-full py-12 md:py-24 lg:py-32 xl:py-48">
+  <div class="container px-4 md:px-6">
+    <div class="flex flex-col items-center space-y-4 text-center">
+      <div class="space-y-2">
+        <h1 style="color: ${props.textColor};" class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+          ${props.title}
+        </h1>
+        <p style="color: ${props.textColor};" class="mx-auto max-w-[700px] text-lg md:text-xl">
+          ${props.subtitle}
+        </p>
+      </div>
+      <div class="space-x-4">
+        <a href="#" style="background-color: ${props.buttonColor}; color: ${props.buttonTextColor};" class="inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-medium shadow hover:opacity-90">
+          ${props.buttonText}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>`;
+
+      case 'text':
+        return `
+<div style="background-color: ${props.bgColor}; color: ${props.textColor}; font-size: ${props.fontSize}px;" class="w-full py-8 px-4">
+  <div class="container mx-auto">
+    <div class="prose max-w-none" style="color: ${props.textColor};">
+      ${props.content.replace(/\n/g, '<br>')}
+    </div>
+  </div>
+</div>`;
+
+      case 'image':
+        return `
+<div class="w-full py-4">
+  <div class="container mx-auto px-4">
+    <img src="${props.src}" alt="${props.alt}" style="width: ${props.width}; height: ${props.height}; object-fit: cover;" class="mx-auto rounded-lg shadow-lg" />
+  </div>
+</div>`;
+
+      case 'button':
+        const sizeClasses = {
+          sm: 'px-3 py-1 text-sm',
+          md: 'px-4 py-2 text-base',
+          lg: 'px-6 py-3 text-lg',
+          xl: 'px-8 py-4 text-xl'
+        };
+        const alignClasses = {
+          left: 'justify-start',
+          center: 'justify-center',
+          right: 'justify-end'
+        };
+        return `
+<div class="w-full py-4">
+  <div class="container mx-auto px-4">
+    <div class="flex ${alignClasses[props.alignment as keyof typeof alignClasses] || 'justify-center'}">
+      <a href="${props.link}" style="background-color: ${props.bgColor}; color: ${props.textColor};" class="${sizeClasses[props.size as keyof typeof sizeClasses] || 'px-4 py-2 text-base'} rounded-md font-medium hover:opacity-90 inline-block">
+        ${props.text}
+      </a>
+    </div>
+  </div>
+</div>`;
+
+      case 'card':
+        const shadowClasses = {
+          none: '',
+          sm: 'box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);',
+          md: 'box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);',
+          lg: 'box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);',
+          xl: 'box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);'
+        };
+        return `
+<div class="w-full py-4">
+  <div class="container mx-auto px-4">
+    <div style="background-color: ${props.bgColor}; color: ${props.textColor}; border-color: ${props.borderColor}; ${shadowClasses[props.shadow as keyof typeof shadowClasses] || shadowClasses.md}" class="border rounded-lg p-6">
+      <h3 class="text-lg font-semibold mb-2">${props.title}</h3>
+      <p class="text-sm opacity-80">${props.content}</p>
+    </div>
+  </div>
+</div>`;
+
+      case 'stats':
+        return `
+<div class="w-full py-4">
+  <div class="container mx-auto px-4">
+    <div style="background-color: ${props.bgColor}; color: ${props.textColor};" class="rounded-lg p-6 text-center shadow-md">
+      <h4 class="text-sm font-medium mb-2 opacity-80">${props.title}</h4>
+      <div style="color: ${props.valueColor};" class="text-3xl font-bold mb-1">${props.value}</div>
+      <p class="text-xs opacity-60">${props.subtitle}</p>
+    </div>
+  </div>
+</div>`;
+
+      case 'grid':
+        const gridCols = {
+          '1': 'grid-template-columns: repeat(1, minmax(0, 1fr));',
+          '2': 'grid-template-columns: repeat(2, minmax(0, 1fr));',
+          '3': 'grid-template-columns: repeat(3, minmax(0, 1fr));',
+          '4': 'grid-template-columns: repeat(4, minmax(0, 1fr));',
+          '6': 'grid-template-columns: repeat(6, minmax(0, 1fr));',
+          '12': 'grid-template-columns: repeat(12, minmax(0, 1fr));'
+        };
+        const gaps = {
+          '2': '0.5rem',
+          '4': '1rem',
+          '6': '1.5rem',
+          '8': '2rem'
+        };
+        return `
+<div style="background-color: ${props.bgColor};" class="w-full ${props.padding}">
+  <div class="${props.maxWidth} mx-auto">
+    <div style="display: grid; ${gridCols[props.columns as keyof typeof gridCols] || gridCols['3']} gap: ${gaps[props.gap as keyof typeof gaps] || '1rem'};">
+      ${Array.from({ length: parseInt(props.columns) }, (_, i) => `
+        <div class="bg-gray-100 p-4 rounded-lg" style="min-height: 8rem; display: flex; align-items: center; justify-content: center;">
+          <span class="text-gray-500">Grid Item ${i + 1}</span>
+        </div>
+      `).join('')}
+    </div>
+  </div>
+</div>`;
+
+      default:
+        return '';
+    }
+  };
+
   const handleExportHTML = () => {
-    // Simple HTML export functionality
-    const html = `
-<!DOCTYPE html>
+    const sortedComponents = components.sort((a, b) => a.order - b.order);
+    const componentsHTML = sortedComponents.map(generateComponentHTML).join('\n');
+
+    const html = `<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page</title>
+    <title>Landing Page - Generated by Page Builder</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .prose {
+            line-height: 1.7;
+        }
+        
+        .prose p {
+            margin-bottom: 1rem;
+        }
+        
+        .hover\\:opacity-90:hover {
+            opacity: 0.9;
+        }
+        
+        .hover\\:underline:hover {
+            text-decoration: underline;
+        }
+        
+        .transition-all {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .shadow-md {
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        
+        .shadow-lg {
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        
+        .bg-gray-100 {
+            background-color: #f3f4f6;
+        }
+        
+        .text-gray-500 {
+            color: #6b7280;
+        }
+        
+        .rounded-lg {
+            border-radius: 0.5rem;
+        }
+        
+        .rounded-md {
+            border-radius: 0.375rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            .text-3xl { font-size: 1.875rem; }
+            .text-lg { font-size: 1.125rem; }
+            .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+            .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        }
+    </style>
 </head>
-<body>
-    <!-- Generated by Page Builder -->
-    ${components.map(comp => `<!-- ${pageComponents[comp.type]?.name || comp.type} -->`).join('\n    ')}
+<body style="margin: 0; padding: 0; font-family: Inter, system-ui, -apple-system, sans-serif;">
+    <!-- Generated by Page Builder Pro -->
+${componentsHTML}
+    
+    <script>
+        // Add smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+        
+        // Add hover effects
+        document.querySelectorAll('a, button').forEach(element => {
+            element.style.cursor = 'pointer';
+        });
+    </script>
 </body>
 </html>`;
 
@@ -107,8 +337,8 @@ const PageBuilder: React.FC = () => {
     URL.revokeObjectURL(url);
 
     toast({
-      title: "HTML diekspor!",
-      description: "File HTML berhasil didownload.",
+      title: "HTML berhasil diekspor!",
+      description: "File HTML siap digunakan dan telah didownload.",
     });
   };
 

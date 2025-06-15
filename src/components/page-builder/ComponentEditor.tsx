@@ -5,6 +5,7 @@ import { pageComponents } from '@/lib/page-components';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface ComponentEditorProps {
   component: PageComponent | null;
@@ -35,7 +36,23 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({ component, onPropChan
             <Label htmlFor={propConfig.key} className="text-sm font-medium text-foreground">
               {propConfig.label}
             </Label>
-            {propConfig.type === 'color' ? (
+            {propConfig.type === 'select' ? (
+              <Select
+                value={component.props[propConfig.key]}
+                onValueChange={(value) => onPropChange(component.id, propConfig.key, value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={`Pilih ${propConfig.label}`} />
+                </SelectTrigger>
+                <SelectContent>
+                  {propConfig.options?.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : propConfig.type === 'color' ? (
               <div className="relative">
                 <Input
                   id={propConfig.key}
@@ -60,6 +77,14 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({ component, onPropChan
                 onChange={(e) => onPropChange(component.id, propConfig.key, e.target.value)}
                 placeholder={`Masukkan ${propConfig.label.toLowerCase()}`}
                 rows={4}
+              />
+            ) : propConfig.type === 'number' ? (
+              <Input
+                id={propConfig.key}
+                type="number"
+                value={component.props[propConfig.key]}
+                onChange={(e) => onPropChange(component.id, propConfig.key, e.target.value)}
+                placeholder={`Masukkan ${propConfig.label.toLowerCase()}`}
               />
             ) : (
               <Input
