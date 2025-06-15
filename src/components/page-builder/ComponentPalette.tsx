@@ -7,8 +7,6 @@ import { pageComponents } from '@/lib/page-components';
 
 interface ComponentPaletteProps {
   onAddComponent: (type: ComponentType) => void;
-  selectedComponentType: ComponentType | null;
-  onSelectComponentType: (type: ComponentType | null) => void;
 }
 
 const componentIcons: Record<ComponentType, any> = {
@@ -43,25 +41,13 @@ const categories = [
   { id: 'form', name: 'Form' },
 ];
 
-const ComponentPalette: React.FC<ComponentPaletteProps> = ({ 
-  onAddComponent, 
-  selectedComponentType, 
-  onSelectComponentType 
-}) => {
+const ComponentPalette: React.FC<ComponentPaletteProps> = ({ onAddComponent }) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   const filteredComponents = Object.entries(pageComponents).filter(([type, config]) => {
     if (selectedCategory === 'all') return true;
     return config.category === selectedCategory;
   });
-
-  const handleComponentClick = (type: ComponentType) => {
-    if (selectedComponentType === type) {
-      onSelectComponentType(null);
-    } else {
-      onSelectComponentType(type);
-    }
-  };
 
   return (
     <div className="flex flex-col h-full bg-secondary/50 p-4">
@@ -88,19 +74,14 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({
       <div className="space-y-2 overflow-y-auto custom-scrollbar">
         {filteredComponents.map(([type, config]) => {
           const IconComponent = componentIcons[type as ComponentType] || Layout;
-          const isSelected = selectedComponentType === type;
           return (
             <Button
               key={type}
-              variant={isSelected ? "default" : "outline"}
-              className="w-full justify-start gap-2 text-sm"
-              onClick={() => handleComponentClick(type as ComponentType)}
+              variant="outline"
+              className="w-full justify-start gap-2 text-sm hover:bg-primary/10"
+              onClick={() => onAddComponent(type as ComponentType)}
             >
-              {isSelected ? (
-                <div className="h-3 w-3 bg-blue-500 rounded-full" />
-              ) : (
-                <Plus className="h-3 w-3" />
-              )}
+              <Plus className="h-3 w-3" />
               <IconComponent className="h-3 w-3" />
               {config.name}
             </Button>
@@ -108,20 +89,12 @@ const ComponentPalette: React.FC<ComponentPaletteProps> = ({
         })}
       </div>
 
-      {selectedComponentType && (
-        <div className="mt-4 p-3 bg-blue-50 rounded-lg border">
-          <p className="text-sm text-blue-800 font-medium">Komponen Terpilih:</p>
-          <p className="text-xs text-blue-600">{pageComponents[selectedComponentType]?.name}</p>
-          <Button
-            size="sm"
-            variant="outline"
-            className="mt-2 w-full"
-            onClick={() => onSelectComponentType(null)}
-          >
-            Batal Pilihan
-          </Button>
-        </div>
-      )}
+      <div className="mt-4 p-3 bg-muted rounded-lg">
+        <p className="text-sm text-muted-foreground">
+          <strong>Tips:</strong> Klik komponen untuk menambahkannya ke canvas. 
+          Setelah ditambahkan, Anda bisa resize dengan drag handle di kiri/kanan komponen.
+        </p>
+      </div>
     </div>
   );
 };
